@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { Clock, GraduationCap, PlayCircle } from 'lucide-react';
 import PublicLayout from '@/layouts/public-layout';
 import { Badge } from '@/components/ui/badge';
@@ -35,6 +35,8 @@ function money(value: string, currency: string) {
 }
 
 export default function CatalogShow({ course }: { course: Course }) {
+    const { auth } = usePage().props;
+    const enrollHref = auth.user ? `/cursos/${course.slug}/inscrever` : '/login';
     const installmentNote =
         course.max_installments > 1
             ? `Até ${course.max_installments}x de ${money((Number(course.price) / course.max_installments).toFixed(2), course.currency)}`
@@ -124,7 +126,7 @@ export default function CatalogShow({ course }: { course: Course }) {
                                 {installmentNote && <p className="mt-1 text-sm text-muted-foreground">{installmentNote}</p>}
                             </div>
                             <Button asChild size="lg" className="w-full">
-                                <Link href="/login">Inscrever-me</Link>
+                                <Link href={enrollHref}>Inscrever-me</Link>
                             </Button>
                             <p className="text-center text-xs text-muted-foreground">
                                 Certificação reconhecida pelo INEFOP

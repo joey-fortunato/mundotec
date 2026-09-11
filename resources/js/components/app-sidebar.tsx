@@ -1,9 +1,11 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
     BookOpen,
+    CreditCard,
     FolderGit2,
     GraduationCap,
     LayoutGrid,
+    PlayCircle,
     Tags,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
@@ -28,6 +30,11 @@ const mainNavItems: NavItem[] = [
         href: dashboard(),
         icon: LayoutGrid,
     },
+    {
+        title: 'Os meus cursos',
+        href: '/os-meus-cursos',
+        icon: PlayCircle,
+    },
 ];
 
 const adminNavItems: NavItem[] = [
@@ -40,6 +47,11 @@ const adminNavItems: NavItem[] = [
         title: 'Categorias',
         href: '/admin/categories',
         icon: Tags,
+    },
+    {
+        title: 'Pagamentos',
+        href: '/admin/pagamentos',
+        icon: CreditCard,
     },
 ];
 
