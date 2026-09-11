@@ -55,7 +55,11 @@ class User extends Authenticatable implements PasskeyUser
         ];
     }
 
-    /** Courses this user teaches (when instructor). @return HasMany<Course, $this> */
+    /**
+     * Courses this user teaches (when instructor).
+     *
+     * @return HasMany<Course, $this>
+     */
     public function courses(): HasMany
     {
         return $this->hasMany(Course::class, 'instructor_id');
