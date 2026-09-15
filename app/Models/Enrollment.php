@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use App\Enums\EnrollmentStatus;
+use Database\Factories\EnrollmentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
 /**
  * @property int $id
@@ -15,12 +17,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property EnrollmentStatus $status
  * @property string $price_paid
  * @property int $progress_percent
- * @property \Illuminate\Support\Carbon|null $enrolled_at
- * @property \Illuminate\Support\Carbon|null $completed_at
+ * @property Carbon|null $enrolled_at
+ * @property Carbon|null $completed_at
  */
 class Enrollment extends Model
 {
-    /** @use HasFactory<\Database\Factories\EnrollmentFactory> */
+    /** @use HasFactory<EnrollmentFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -55,5 +57,11 @@ class Enrollment extends Model
     public function lessonProgress(): HasMany
     {
         return $this->hasMany(LessonProgress::class);
+    }
+
+    /** @return HasMany<Order, $this> */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class);
     }
 }

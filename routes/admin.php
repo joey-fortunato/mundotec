@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\LessonController;
 use App\Http\Controllers\Admin\ModuleController;
+use App\Http\Controllers\Admin\PaymentController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'admin'])
@@ -17,6 +18,10 @@ Route::middleware(['auth', 'verified', 'admin'])
 
         Route::resource('categories', CategoryController::class)
             ->only(['index', 'store', 'update', 'destroy']);
+
+        Route::get('pagamentos', [PaymentController::class, 'index'])->name('payments.index');
+        Route::post('pagamentos/{payment}/confirmar', [PaymentController::class, 'confirm'])->name('payments.confirm');
+        Route::post('pagamentos/{payment}/rejeitar', [PaymentController::class, 'reject'])->name('payments.reject');
 
         // Modules nested under a course.
         Route::post('courses/{course}/modules', [ModuleController::class, 'store'])->name('courses.modules.store');
