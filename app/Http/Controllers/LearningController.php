@@ -38,6 +38,8 @@ class LearningController extends Controller
 
         $lessonIds = $allLessons->pluck('id')->all();
         $currentIndex = $lesson ? array_search($lesson->id, $lessonIds, true) : false;
+        $nextLessonId = is_int($currentIndex) ? ($lessonIds[$currentIndex + 1] ?? null) : null;
+        $prevLessonId = is_int($currentIndex) && $currentIndex > 0 ? $lessonIds[$currentIndex - 1] : null;
 
         return Inertia::render('learn/show', [
             'course' => [
@@ -71,8 +73,8 @@ class LearningController extends Controller
                 'completed' => in_array($lesson->id, $completedIds, true),
                 'module_title' => $lesson->module->title,
             ] : null,
-            'nextLessonId' => $currentIndex !== false ? ($lessonIds[$currentIndex + 1] ?? null) : null,
-            'prevLessonId' => $currentIndex !== false && $currentIndex > 0 ? $lessonIds[$currentIndex - 1] : null,
+            'nextLessonId' => $nextLessonId,
+            'prevLessonId' => $prevLessonId,
         ]);
     }
 
@@ -86,7 +88,7 @@ class LearningController extends Controller
         $lessonIds = $course->modules()->with('lessons')->get()
             ->flatMap->lessons->pluck('id')->all();
         $index = array_search($lesson->id, $lessonIds, true);
-        $next = $index !== false ? ($lessonIds[$index + 1] ?? null) : null;
+        $next = is_int($index) ? ($lessonIds[$index + 1] ?? null) : null;
 
         return $next
             ? redirect()->route('learn.lesson', [$course, $next])
