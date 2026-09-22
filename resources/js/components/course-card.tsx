@@ -64,7 +64,7 @@ export function CourseCard({ course }: { course: CourseCardData }) {
 
     return (
         <Link href={`/cursos/${course.slug}`} className="group block h-full">
-            <Card className="flex h-full flex-col overflow-hidden pt-0 transition-shadow group-hover:shadow-md">
+            <Card className="flex h-full flex-col overflow-hidden pt-0 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:shadow-lg">
                 <div className="relative flex aspect-[16/9] items-center justify-center overflow-hidden bg-gradient-to-br from-primary to-primary/70">
                     <div
                         className="absolute inset-0 opacity-20"

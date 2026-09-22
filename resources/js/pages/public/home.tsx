@@ -110,7 +110,7 @@ export default function Home({ featured, categories, stats }: { featured: Course
                             </div>
                         </div>
                     </Card>
-                    <Card className="absolute -bottom-4 left-2 flex items-center gap-2.5 p-3">
+                    <Card className="absolute -top-3 -left-3 flex items-center gap-2.5 p-3 shadow-lg">
                         <span className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 dark:bg-green-950/40">
                             <BadgeCheck className="h-5 w-5 text-green-600" />
                         </span>
@@ -134,7 +134,7 @@ export default function Home({ featured, categories, stats }: { featured: Course
 
                         return (
                             <Link key={c.slug} href={`/cursos?categoria=${c.slug}`} className="group">
-                                <Card className="h-full transition-shadow group-hover:shadow-md">
+                                <Card className="h-full transition-all duration-200 group-hover:-translate-y-0.5 group-hover:shadow-lg">
                                     <CardContent className="pt-6">
                                         <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary">
                                             <Icon className="h-5 w-5" />
