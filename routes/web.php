@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CourseCatalogController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LearningController;
@@ -17,7 +18,7 @@ Route::get('cursos/{course}', [CourseCatalogController::class, 'show'])->name('c
 Route::get('verificar/{certificate}', [CertificateController::class, 'verify'])->name('certificates.verify');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::inertia('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('os-meus-cursos', [MyCoursesController::class, 'index'])->name('my-courses');
 

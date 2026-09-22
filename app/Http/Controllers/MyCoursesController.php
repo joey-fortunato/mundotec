@@ -12,13 +12,14 @@ class MyCoursesController extends Controller
     {
         $enrollments = $request->user()
             ->enrollments()
-            ->with('course:id,title,slug')
+            ->with('course:id,title,slug,category_id', 'course.category:id,slug')
             ->latest()
             ->get()
             ->map(fn ($enrollment) => [
                 'id' => $enrollment->id,
                 'course_title' => $enrollment->course->title,
                 'course_slug' => $enrollment->course->slug,
+                'category_slug' => $enrollment->course->category?->slug,
                 'status' => $enrollment->status->value,
                 'status_label' => $enrollment->status->label(),
                 'progress_percent' => $enrollment->progress_percent,
