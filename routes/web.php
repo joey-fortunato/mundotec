@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CourseCatalogController;
 use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\LearningController;
 use App\Http\Controllers\MyCoursesController;
 use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('matriculas/{enrollment}/pagamento', [PaymentController::class, 'show'])->name('payment.show');
     Route::post('matriculas/{enrollment}/pagamento', [PaymentController::class, 'store'])->name('payment.store');
+
+    Route::get('aprender/{course}', [LearningController::class, 'show'])->name('learn.show');
+    Route::get('aprender/{course}/aulas/{lesson}', [LearningController::class, 'show'])->name('learn.lesson');
+    Route::post('aprender/{course}/aulas/{lesson}/concluir', [LearningController::class, 'complete'])->name('learn.complete');
 });
 
 require __DIR__.'/settings.php';

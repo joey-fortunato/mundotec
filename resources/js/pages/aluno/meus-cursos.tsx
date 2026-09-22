@@ -77,8 +77,10 @@ export default function MyCourses({
                                     </Button>
                                 ) : (
                                     <Button asChild>
-                                        <Link href={`/cursos/${e.course_slug}`}>
-                                            Ver curso
+                                        <Link href={`/aprender/${e.course_slug}`}>
+                                            {e.status === 'completed'
+                                                ? 'Rever curso'
+                                                : 'Continuar'}
                                         </Link>
                                     </Button>
                                 )}

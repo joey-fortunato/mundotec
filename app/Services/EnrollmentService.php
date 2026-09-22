@@ -8,6 +8,8 @@ use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Models\Course;
 use App\Models\Enrollment;
+use App\Models\Lesson;
+use App\Models\LessonProgress;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\User;
@@ -111,6 +113,36 @@ class EnrollmentService
                 ]);
             }
         });
+    }
+
+    /**
+     * Mark a lesson as complete for an enrollment and recompute progress.
+     */
+    public function markLessonComplete(Enrollment $enrollment, Lesson $lesson): void
+    {
+        LessonProgress::firstOrCreate(
+            ['enrollment_id' => $enrollment->id, 'lesson_id' => $lesson->id],
+            ['completed_at' => now()],
+        );
+
+        $this->recomputeProgress($enrollment);
+    }
+
+    /**
+     * Recompute the percentage of completed lessons and, at 100%, mark the
+     * enrollment as completed.
+     */
+    public function recomputeProgress(Enrollment $enrollment): void
+    {
+        $total = Lesson::whereHas('module', fn ($q) => $q->where('course_id', $enrollment->course_id))->count();
+        $done = $enrollment->lessonProgress()->whereNotNull('completed_at')->count();
+        $percent = $total > 0 ? (int) round($done / $total * 100) : 0;
+
+        $enrollment->update([
+            'progress_percent' => $percent,
+            'status' => $percent >= 100 ? EnrollmentStatus::Completed : $enrollment->status,
+            'completed_at' => $percent >= 100 ? ($enrollment->completed_at ?? now()) : null,
+        ]);
     }
 
     private function reference(string $prefix): string
