@@ -2,15 +2,12 @@ import { Head, Link } from '@inertiajs/react';
 import {
     Award,
     BadgeCheck,
-    BookOpenCheck,
-    Compass,
+    ChevronDown,
     FileSpreadsheet,
     GraduationCap,
     Megaphone,
     Network,
-    ShieldCheck,
-    Star,
-    Users
+    Star
     
 } from 'lucide-react';
 import type {LucideIcon} from 'lucide-react';
@@ -32,48 +29,49 @@ const CATEGORY_ICON: Record<string, LucideIcon> = {
     administrativos: FileSpreadsheet,
 };
 
-const PARTNERS = ['INEFOP', 'Cisco', 'Primavera BSS', 'Microsoft'];
-
-const STEPS = [
-    [Compass, 'Escolhe um curso', 'Explora o catálogo e encontra a formação certa para os teus objetivos.'],
-    [BookOpenCheck, 'Aprende ao teu ritmo', 'Aulas em vídeo, exercícios e projetos reais, com acompanhamento.'],
-    [Award, 'Recebe o certificado', 'Conclui o curso e recebe um certificado reconhecido pelo INEFOP.'],
-] as const;
-
-const INSTRUCTORS = [
-    ['Paulo Neves', 'Engenheiro de Redes · CCNP', 'PN'],
-    ['Sara Dias', 'Programadora Full-Stack', 'SD'],
-    ['Júlia Costa', 'Especialista em Marketing', 'JC'],
-] as const;
+const ELEVA = [
+    ['+300', 'Graduados'],
+    ['+1000', 'Estagiários'],
+    ['+1000', 'Treinamentos'],
+];
 
 const TESTIMONIALS = [
     ['O curso de redes mudou a minha carreira. Em três meses já estava a trabalhar na área.', 'João Neto', 'Técnico de Redes · CCNA', 'JN'],
     ['Aprendi a criar sites do zero e hoje trabalho como freelancer.', 'Ana Kiala', 'Programadora Web', 'AK'],
-] as const;
+    ['A formação em Primavera abriu-me portas no departamento financeiro.', 'Domingas Paulo', 'Assistente Administrativa', 'DP'],
+];
+
+const FAQ = [
+    ['Os certificados são reconhecidos?', 'Sim. Os nossos cursos são certificados e reconhecidos pelo INEFOP, com valor no mercado de trabalho angolano.'],
+    ['Como faço o pagamento?', 'O pagamento é feito por Multicaixa Express, podendo ser em prestações consoante o curso.'],
+    ['As aulas são presenciais ou online?', 'Temos formação online na plataforma e turmas presenciais em Luanda e no Zango III.'],
+    ['Recebo apoio para estágio?', 'Sim. Temos um programa de estágios com ligação a empresas parceiras.'],
+];
 
 export default function Home({ featured, categories, stats }: { featured: CourseCardData[]; categories: Category[]; stats: Stats }) {
     return (
         <PublicLayout>
-            <Head title="Formação profissional certificada" />
+            <Head title="Cursos Profissionais, Estágios e Treinamentos" />
 
+            {/* Hero */}
             <section className="grid items-center gap-8 py-10 md:grid-cols-2">
                 <div>
                     <Badge variant="secondary" className="gap-1.5">
-                        <Award className="h-3.5 w-3.5" /> Certificação reconhecida pelo INEFOP
+                        <Award className="h-3.5 w-3.5" /> Certificados reconhecidos pelo INEFOP
                     </Badge>
                     <h1 className="mt-4 text-4xl leading-[1.08] font-bold tracking-tight md:text-5xl">
-                        Eleva a tua carreira com formação prática
+                        Cursos Profissionais, Estágios e Treinamentos
                     </h1>
                     <p className="mt-4 max-w-md text-lg text-muted-foreground">
-                        Cursos profissionais de tecnologia, marketing e gestão — com certificado, projetos reais e
-                        acompanhamento de formadores.
+                        Domine habilidades de alto impacto com cursos acessíveis e certificados que fazem a diferença na
+                        sua carreira.
                     </p>
                     <div className="mt-6 flex flex-wrap gap-3">
                         <Button asChild size="lg">
-                            <Link href="/cursos">Explorar cursos</Link>
+                            <Link href="/cursos">Inicie a sua jornada</Link>
                         </Button>
                         <Button asChild size="lg" variant="outline">
-                            <Link href="/register">Criar conta grátis</Link>
+                            <Link href="/sobre">Sobre nós</Link>
                         </Button>
                     </div>
                     <div className="mt-8 flex gap-8">
@@ -94,9 +92,15 @@ export default function Home({ featured, categories, stats }: { featured: Course
                     </div>
                 </div>
                 <div className="relative">
-                    <Card className="rotate-[-2deg] overflow-hidden p-0">
-                        <div className="flex h-32 items-center justify-center bg-primary">
-                            <Network className="h-14 w-14 text-primary-foreground/70" strokeWidth={1.3} />
+                    <Card className="overflow-hidden p-0">
+                        <div className="relative flex aspect-[16/10] items-center justify-center overflow-hidden bg-gradient-to-br from-primary to-primary/70">
+                            <div
+                                className="absolute inset-0 opacity-20"
+                                style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '18px 18px' }}
+                            />
+                            <span className="relative flex h-20 w-20 items-center justify-center rounded-3xl bg-white/15 backdrop-blur-sm">
+                                <GraduationCap className="h-10 w-10 text-white" />
+                            </span>
                         </div>
                         <div className="p-5">
                             <div className="font-semibold">Cisco CCNA — Redes</div>
@@ -118,21 +122,11 @@ export default function Home({ featured, categories, stats }: { featured: Course
                 </div>
             </section>
 
-            <section className="flex flex-wrap items-center justify-between gap-4 border-y py-5 text-sm font-semibold text-muted-foreground">
-                <span className="text-xs tracking-wide">PARCEIROS &amp; RECONHECIMENTO</span>
-                <div className="flex flex-wrap items-center gap-8">
-                    {PARTNERS.map((p) => (
-                        <span key={p} className="text-foreground/70">
-                            {p}
-                        </span>
-                    ))}
-                </div>
-            </section>
-
+            {/* Categories */}
             <section className="py-12">
                 <div className="mx-auto mb-8 max-w-lg text-center">
-                    <h2 className="text-2xl font-bold">Áreas de formação</h2>
-                    <p className="mt-2 text-muted-foreground">Escolhe o teu caminho e começa hoje.</p>
+                    <h2 className="text-2xl font-bold">Explore todas as categorias</h2>
+                    <p className="mt-2 text-muted-foreground">Escolhe a tua área e começa hoje.</p>
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {categories.map((c) => {
@@ -160,11 +154,12 @@ export default function Home({ featured, categories, stats }: { featured: Course
                 </div>
             </section>
 
+            {/* Recommended courses */}
             {featured.length > 0 && (
                 <section className="py-6">
                     <div className="mb-6 flex items-end justify-between">
                         <div>
-                            <h2 className="text-2xl font-bold">Cursos em destaque</h2>
+                            <h2 className="text-2xl font-bold">Cursos recomendados</h2>
                             <p className="mt-1 text-muted-foreground">Os mais procurados este mês.</p>
                         </div>
                         <Link href="/cursos" className="text-sm font-semibold text-primary">
@@ -179,59 +174,37 @@ export default function Home({ featured, categories, stats }: { featured: Course
                 </section>
             )}
 
-            <section className="py-12">
+            {/* Nós Elevamos Você */}
+            <section className="my-12 rounded-2xl bg-primary px-6 py-12 text-primary-foreground">
                 <div className="mx-auto mb-8 max-w-lg text-center">
-                    <h2 className="text-2xl font-bold">Como funciona</h2>
-                    <p className="mt-2 text-muted-foreground">Três passos até ao teu certificado.</p>
+                    <h2 className="text-2xl font-bold text-primary-foreground">Nós Elevamos Você</h2>
+                    <p className="mt-2 opacity-85">Resultados que falam por si.</p>
                 </div>
-                <div className="grid gap-5 md:grid-cols-3">
-                    {STEPS.map(([Icon, title, desc], i) => (
-                        <Card key={title}>
-                            <CardContent className="pt-6">
-                                <div className="mb-4 flex items-center gap-3">
-                                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                                        <Icon className="h-5 w-5" />
-                                    </span>
-                                    <span className="text-3xl font-bold text-primary/20">{i + 1}</span>
-                                </div>
-                                <h3 className="font-semibold">{title}</h3>
-                                <p className="mt-1.5 text-sm text-muted-foreground">{desc}</p>
-                            </CardContent>
-                        </Card>
+                <div className="grid gap-6 sm:grid-cols-3">
+                    {ELEVA.map(([value, label]) => (
+                        <div key={label} className="text-center">
+                            <div className="text-4xl font-bold">{value}</div>
+                            <div className="mt-1 opacity-85">{label}</div>
+                        </div>
                     ))}
                 </div>
             </section>
 
-            <section className="grid items-center gap-10 py-6 md:grid-cols-2">
-                <div>
-                    <h2 className="text-2xl font-bold">Porquê a Mundo da Tecnologia?</h2>
-                    <div className="mt-6 flex flex-col gap-5">
-                        {[
-                            [Award, 'Certificado INEFOP', 'Reconhecido no mercado de trabalho angolano.'],
-                            [ShieldCheck, 'Projetos reais', 'Aprende a fazer, não só a assistir.'],
-                            [Users, 'Estágios e emprego', 'Ligação a empresas e programa de estágios.'],
-                        ].map(([Icon, title, desc]) => {
-                            const I = Icon as LucideIcon;
-
-                            return (
-                                <div key={title as string} className="flex gap-3.5">
-                                    <div className="flex h-10 w-10 flex-none items-center justify-center rounded-lg bg-primary/10 text-primary">
-                                        <I className="h-5 w-5" />
-                                    </div>
-                                    <div>
-                                        <div className="font-semibold">{title as string}</div>
-                                        <div className="text-sm text-muted-foreground">{desc as string}</div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
+            {/* Testimonials */}
+            <section className="py-6">
+                <div className="mx-auto mb-8 max-w-lg text-center">
+                    <h2 className="text-2xl font-bold">O que os nossos formandos dizem</h2>
                 </div>
-                <div className="grid gap-4">
+                <div className="grid gap-4 md:grid-cols-3">
                     {TESTIMONIALS.map(([quote, name, role, ini]) => (
-                        <Card key={name} className="bg-primary/5">
+                        <Card key={name}>
                             <CardContent className="pt-6">
-                                <p className="leading-relaxed">"{quote}"</p>
+                                <div className="mb-2 flex gap-0.5 text-amber-400">
+                                    {Array.from({ length: 5 }).map((_, i) => (
+                                        <Star key={i} className="h-4 w-4 fill-amber-400" />
+                                    ))}
+                                </div>
+                                <p className="text-sm leading-relaxed">"{quote}"</p>
                                 <div className="mt-4 flex items-center gap-3">
                                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
                                         {ini}
@@ -247,34 +220,31 @@ export default function Home({ featured, categories, stats }: { featured: Course
                 </div>
             </section>
 
+            {/* FAQ */}
             <section className="py-12">
                 <div className="mx-auto mb-8 max-w-lg text-center">
-                    <h2 className="text-2xl font-bold">Formadores</h2>
-                    <p className="mt-2 text-muted-foreground">Profissionais com experiência real no terreno.</p>
+                    <h2 className="text-2xl font-bold">Perguntas frequentes</h2>
                 </div>
-                <div className="grid gap-4 sm:grid-cols-3">
-                    {INSTRUCTORS.map(([name, role, ini]) => (
-                        <Card key={name}>
-                            <CardContent className="flex items-center gap-3 pt-6">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-lg font-bold text-primary-foreground">
-                                    {ini}
-                                </div>
-                                <div>
-                                    <div className="font-semibold">{name}</div>
-                                    <div className="text-xs text-muted-foreground">{role}</div>
-                                </div>
-                            </CardContent>
-                        </Card>
+                <div className="mx-auto flex max-w-2xl flex-col gap-3">
+                    {FAQ.map(([q, a]) => (
+                        <details key={q} className="group rounded-xl border bg-card px-5 py-4">
+                            <summary className="flex cursor-pointer list-none items-center justify-between font-medium">
+                                {q}
+                                <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform group-open:rotate-180" />
+                            </summary>
+                            <p className="mt-3 text-sm text-muted-foreground">{a}</p>
+                        </details>
                     ))}
                 </div>
             </section>
 
-            <section className="my-8 flex flex-col items-center justify-between gap-4 rounded-2xl bg-primary p-8 text-primary-foreground sm:flex-row">
+            {/* CTA */}
+            <section className="my-8 flex flex-col items-center justify-between gap-4 rounded-2xl border bg-muted/30 p-8 sm:flex-row">
                 <div>
-                    <h2 className="text-2xl font-bold text-primary-foreground">Pronto para começar?</h2>
-                    <p className="mt-1 opacity-85">Inscreve-te num curso e recebe o teu certificado.</p>
+                    <h2 className="text-2xl font-bold">Pronto para começar?</h2>
+                    <p className="mt-1 text-muted-foreground">Inscreve-te num curso e recebe o teu certificado.</p>
                 </div>
-                <Button asChild size="lg" variant="secondary">
+                <Button asChild size="lg">
                     <Link href="/register">Criar conta grátis</Link>
                 </Button>
             </section>

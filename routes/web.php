@@ -13,6 +13,12 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('cursos', [CourseCatalogController::class, 'index'])->name('catalog.index');
+
+Route::inertia('estagios', 'public/estagios')->name('estagios');
+Route::inertia('treinamentos', 'public/treinamentos')->name('treinamentos');
+Route::inertia('sobre', 'public/sobre')->name('sobre');
+Route::inertia('contactos', 'public/contactos')->name('contactos');
+
 Route::get('cursos/{course}', [CourseCatalogController::class, 'show'])->name('catalog.show');
 
 Route::get('verificar/{certificate}', [CertificateController::class, 'verify'])->name('certificates.verify');
