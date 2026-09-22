@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\CourseStatus;
 use App\Enums\EnrollmentStatus;
 use App\Enums\OrderStatus;
+use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
 use App\Enums\UserRole;
 use App\Models\Course;
@@ -12,8 +13,6 @@ use App\Models\Enrollment;
 use App\Models\Payment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class EnrollmentPaymentTest extends TestCase
@@ -57,9 +56,8 @@ class EnrollmentPaymentTest extends TestCase
         $this->assertSame('90000.00', $order->total);
     }
 
-    public function test_student_can_upload_a_proof_of_payment(): void
+    public function test_student_can_initiate_a_multicaixa_payment(): void
     {
-        Storage::fake('public');
         $student = User::factory()->create(['role' => UserRole::Student]);
         $course = $this->publishedCourse();
 
@@ -67,15 +65,26 @@ class EnrollmentPaymentTest extends TestCase
         $enrollment = Enrollment::first();
 
         $this->actingAs($student)
-            ->post("/matriculas/{$enrollment->id}/pagamento", [
-                'proof' => UploadedFile::fake()->image('comprovativo.jpg'),
-            ])
+            ->post("/matriculas/{$enrollment->id}/pagamento", ['phone' => '923 000 000'])
             ->assertRedirect();
 
         $payment = Payment::first();
         $this->assertNotNull($payment);
         $this->assertSame(PaymentStatus::Pending, $payment->status);
-        Storage::disk('public')->assertExists($payment->proof_path);
+        $this->assertSame(PaymentMethod::MulticaixaExpress, $payment->method);
+        $this->assertSame('923000000', $payment->gateway_payload['phone']);
+    }
+
+    public function test_payment_requires_a_valid_phone(): void
+    {
+        $student = User::factory()->create(['role' => UserRole::Student]);
+        $course = $this->publishedCourse();
+        $this->actingAs($student)->post("/cursos/{$course->slug}/inscrever", ['installments' => 1]);
+        $enrollment = Enrollment::first();
+
+        $this->actingAs($student)
+            ->post("/matriculas/{$enrollment->id}/pagamento", ['phone' => '123'])
+            ->assertSessionHasErrors('phone');
     }
 
     public function test_a_student_cannot_view_another_students_payment(): void
@@ -92,7 +101,6 @@ class EnrollmentPaymentTest extends TestCase
 
     public function test_admin_confirmation_activates_the_enrollment(): void
     {
-        Storage::fake('public');
         $admin = User::factory()->create(['role' => UserRole::Admin]);
         $student = User::factory()->create(['role' => UserRole::Student]);
         $course = $this->publishedCourse(price: 60000, maxInstallments: 1);
@@ -100,7 +108,7 @@ class EnrollmentPaymentTest extends TestCase
         $this->actingAs($student)->post("/cursos/{$course->slug}/inscrever", ['installments' => 1]);
         $enrollment = Enrollment::first();
         $this->actingAs($student)->post("/matriculas/{$enrollment->id}/pagamento", [
-            'proof' => UploadedFile::fake()->image('comprovativo.jpg'),
+            'phone' => '923 000 000',
         ]);
 
         $payment = Payment::first();

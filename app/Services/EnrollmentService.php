@@ -43,7 +43,7 @@ class EnrollmentService
                     'enrollment_id' => $enrollment->id,
                     'total' => $course->price,
                     'currency' => $course->currency,
-                    'payment_method' => PaymentMethod::BankTransfer,
+                    'payment_method' => PaymentMethod::MulticaixaExpress,
                     'installments' => $installments,
                     'status' => OrderStatus::Pending,
                 ]);
@@ -54,35 +54,41 @@ class EnrollmentService
     }
 
     /**
-     * Record a proof-of-payment upload as a pending payment on the order.
+     * Initiate a Multicaixa Express payment for the next installment, pushing
+     * a request to the given phone number. Stays pending until the gateway
+     * (or an admin, while there is no integration) settles it.
      */
-    public function recordProof(Order $order, string $proofPath): Payment
+    public function initiatePayment(Order $order, string $phone): Payment
     {
-        $installmentNumber = $order->payments()->count() + 1;
+        $installmentNumber = $order->payments()
+            ->whereIn('status', [PaymentStatus::Pending, PaymentStatus::Confirmed])
+            ->count() + 1;
+
         $amount = $order->installments > 1
             ? round((float) $order->total / $order->installments, 2)
             : (float) $order->total;
 
         return $order->payments()->create([
-            'reference' => $this->reference('PG'),
+            'reference' => $this->reference('MEX'),
             'amount' => $amount,
             'installment_number' => $installmentNumber,
-            'method' => PaymentMethod::BankTransfer,
+            'method' => PaymentMethod::MulticaixaExpress,
             'status' => PaymentStatus::Pending,
-            'proof_path' => $proofPath,
+            'gateway_payload' => ['gateway' => 'multicaixa_express', 'phone' => $phone],
         ]);
     }
 
     /**
-     * Confirm a payment (admin), recompute the order and grant access.
+     * Settle a payment (gateway callback, or admin while there is no
+     * integration), recompute the order and grant access.
      */
-    public function confirmPayment(Payment $payment, User $admin): void
+    public function confirmPayment(Payment $payment, ?User $admin = null): void
     {
         DB::transaction(function () use ($payment, $admin) {
             $payment->update([
                 'status' => PaymentStatus::Confirmed,
                 'confirmed_at' => now(),
-                'confirmed_by' => $admin->id,
+                'confirmed_by' => $admin?->id,
             ]);
 
             $order = $payment->order;

@@ -2,17 +2,18 @@
 
 return [
     /*
-     * Dados bancários mostrados ao aluno nas instruções de pagamento por
-     * transferência. Definir em produção via variáveis de ambiente.
+     * Configuração do gateway Multicaixa Express (EMIS / agregador).
+     * Em produção, definir as credenciais via variáveis de ambiente. Enquanto
+     * não houver integração, os pagamentos ficam pendentes até liquidação.
      */
-    'bank' => [
-        'name' => env('MUNDOTEC_BANK_NAME', 'Banco (definir)'),
-        'account_holder' => env('MUNDOTEC_BANK_HOLDER', 'Mundo da Tecnologia'),
-        'iban' => env('MUNDOTEC_BANK_IBAN', 'AO06 0000 0000 0000 0000 0000 0'),
+    'multicaixa' => [
+        'merchant' => env('MUNDOTEC_MCX_MERCHANT'),
+        'pos_id' => env('MUNDOTEC_MCX_POS_ID'),
+        'callback_secret' => env('MUNDOTEC_MCX_CALLBACK_SECRET'),
     ],
 
     /*
-     * Ao confirmar um pagamento, libertar o acesso ao curso já na primeira
+     * Ao liquidar um pagamento, libertar o acesso ao curso já na primeira
      * prestação (true) ou apenas quando a encomenda estiver totalmente paga
      * (false).
      */

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\OrderStatus;
+use App\Enums\PaymentStatus;
 use App\Models\Enrollment;
 use App\Services\EnrollmentService;
 use Illuminate\Http\RedirectResponse;
@@ -29,6 +30,8 @@ class PaymentController extends Controller
             ? round((float) $order->total / $order->installments, 2)
             : (float) $order->total;
 
+        $pending = $order->payments->firstWhere('status', PaymentStatus::Pending);
+
         return Inertia::render('payment/show', [
             'enrollment' => [
                 'id' => $enrollment->id,
@@ -44,6 +47,7 @@ class PaymentController extends Controller
                 'installment_amount' => number_format($installmentAmount, 2, '.', ''),
                 'status' => $order->status->value,
                 'status_label' => $order->status->label(),
+                'paid_count' => $order->payments->where('status', PaymentStatus::Confirmed)->count(),
                 'payments' => $order->payments->map(fn ($p) => [
                     'reference' => $p->reference,
                     'amount' => $p->amount,
@@ -53,7 +57,7 @@ class PaymentController extends Controller
                     'created_at' => $p->created_at?->format('d/m/Y'),
                 ]),
             ],
-            'bank' => config('mundotec.bank'),
+            'pendingPhone' => $pending?->gateway_payload['phone'] ?? null,
         ]);
     }
 
@@ -61,8 +65,8 @@ class PaymentController extends Controller
     {
         abort_unless($enrollment->user_id === $request->user()->id, 403);
 
-        $request->validate([
-            'proof' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+        $validated = $request->validate([
+            'phone' => ['required', 'string', 'regex:/^9\d{2}\s?\d{3}\s?\d{3}$/'],
         ]);
 
         $order = $enrollment->orders()
@@ -70,12 +74,10 @@ class PaymentController extends Controller
             ->latest()
             ->firstOrFail();
 
-        $path = $request->file('proof')->store('comprovativos', 'public');
-
-        $this->service->recordProof($order, $path);
+        $this->service->initiatePayment($order, preg_replace('/\s+/', '', $validated['phone']));
 
         return redirect()
             ->route('payment.show', $enrollment)
-            ->with('success', 'Comprovativo enviado. Vamos confirmar o pagamento em breve.');
+            ->with('success', 'Pedido enviado. Confirma o pagamento no app Multicaixa Express.');
     }
 }
