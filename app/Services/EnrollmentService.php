@@ -6,6 +6,7 @@ use App\Enums\EnrollmentStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Models\Certificate;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\Lesson;
@@ -143,6 +144,25 @@ class EnrollmentService
             'status' => $percent >= 100 ? EnrollmentStatus::Completed : $enrollment->status,
             'completed_at' => $percent >= 100 ? ($enrollment->completed_at ?? now()) : null,
         ]);
+
+        if ($percent >= 100) {
+            $this->issueCertificate($enrollment);
+        }
+    }
+
+    /**
+     * Issue a completion certificate for an enrollment (idempotent).
+     */
+    public function issueCertificate(Enrollment $enrollment): Certificate
+    {
+        return Certificate::firstOrCreate(
+            ['user_id' => $enrollment->user_id, 'course_id' => $enrollment->course_id],
+            [
+                'serial' => 'MT-CERT-'.strtoupper(Str::random(8)),
+                'enrollment_id' => $enrollment->id,
+                'issued_at' => now(),
+            ],
+        );
     }
 
     private function reference(string $prefix): string

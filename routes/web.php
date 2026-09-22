@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CertificateController;
 use App\Http\Controllers\CourseCatalogController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\HomeController;
@@ -12,6 +13,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('cursos', [CourseCatalogController::class, 'index'])->name('catalog.index');
 Route::get('cursos/{course}', [CourseCatalogController::class, 'show'])->name('catalog.show');
+
+Route::get('verificar/{certificate}', [CertificateController::class, 'verify'])->name('certificates.verify');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
@@ -27,6 +30,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('aprender/{course}', [LearningController::class, 'show'])->name('learn.show');
     Route::get('aprender/{course}/aulas/{lesson}', [LearningController::class, 'show'])->name('learn.lesson');
     Route::post('aprender/{course}/aulas/{lesson}/concluir', [LearningController::class, 'complete'])->name('learn.complete');
+
+    Route::get('certificados', [CertificateController::class, 'index'])->name('certificates.index');
+    Route::get('certificados/{certificate}', [CertificateController::class, 'show'])->name('certificates.show');
 });
 
 require __DIR__.'/settings.php';

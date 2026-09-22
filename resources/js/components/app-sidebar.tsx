@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
 import {
+    Award,
     BookOpen,
     CreditCard,
     FolderGit2,
@@ -34,6 +35,11 @@ const mainNavItems: NavItem[] = [
         title: 'Os meus cursos',
         href: '/os-meus-cursos',
         icon: PlayCircle,
+    },
+    {
+        title: 'Certificados',
+        href: '/certificados',
+        icon: Award,
     },
 ];
 
