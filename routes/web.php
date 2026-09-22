@@ -8,6 +8,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LearningController;
 use App\Http\Controllers\MyCoursesController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PaymentHistoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -27,6 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('os-meus-cursos', [MyCoursesController::class, 'index'])->name('my-courses');
+    Route::get('faturas', [PaymentHistoryController::class, 'index'])->name('faturas');
 
     Route::get('cursos/{course}/inscrever', [EnrollmentController::class, 'create'])->name('enroll.create');
     Route::post('cursos/{course}/inscrever', [EnrollmentController::class, 'store'])->name('enroll.store');
