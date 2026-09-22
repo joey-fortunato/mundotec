@@ -14,16 +14,23 @@ class HomeController extends Controller
     {
         $featured = Course::query()
             ->published()
-            ->with('category:id,name')
+            ->with(['category:id,name,slug', 'instructor:id,name'])
+            ->withCount('lessons')
             ->latest('published_at')
-            ->take(3)
+            ->take(6)
             ->get()
             ->map(fn (Course $course) => [
                 'title' => $course->title,
                 'slug' => $course->slug,
+                'subtitle' => $course->subtitle,
                 'price' => $course->price,
                 'currency' => $course->currency,
+                'level' => $course->level,
                 'category' => $course->category?->name,
+                'category_slug' => $course->category?->slug,
+                'instructor' => $course->instructor?->name,
+                'lessons_count' => $course->lessons_count,
+                'duration_minutes' => $course->duration_minutes,
             ]);
 
         $categories = Category::query()
