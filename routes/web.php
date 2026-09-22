@@ -2,12 +2,13 @@
 
 use App\Http\Controllers\CourseCatalogController;
 use App\Http\Controllers\EnrollmentController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LearningController;
 use App\Http\Controllers\MyCoursesController;
 use App\Http\Controllers\PaymentController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('cursos', [CourseCatalogController::class, 'index'])->name('catalog.index');
 Route::get('cursos/{course}', [CourseCatalogController::class, 'show'])->name('catalog.show');
