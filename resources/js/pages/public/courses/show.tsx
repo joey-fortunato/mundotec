@@ -36,6 +36,7 @@ type Course = {
     category_slug: string | null;
     instructor: string | null;
     lessons_count: number;
+    cover: string | null;
     modules: Module[];
 };
 
@@ -97,7 +98,11 @@ export default function CatalogShow({ course }: { course: Course }) {
                     </div>
 
                     <div className="relative mt-6 flex aspect-video items-center justify-center overflow-hidden rounded-xl bg-primary/8">
-                        <Icon className="h-16 w-16 text-primary/25" strokeWidth={1.2} />
+                        {course.cover ? (
+                            <img src={course.cover} alt={course.title} className="absolute inset-0 h-full w-full object-cover" />
+                        ) : (
+                            <Icon className="h-16 w-16 text-primary/25" strokeWidth={1.2} />
+                        )}
                         <div className="absolute flex h-14 w-14 items-center justify-center rounded-full bg-background shadow-lg">
                             <PlayCircle className="h-8 w-8 text-primary" />
                         </div>

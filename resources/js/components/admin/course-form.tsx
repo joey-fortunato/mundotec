@@ -1,5 +1,5 @@
 import { useForm } from '@inertiajs/react';
-import { LoaderCircle } from 'lucide-react';
+import { ImageIcon, LoaderCircle } from 'lucide-react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import {
@@ -44,6 +44,7 @@ export type CourseFormValues = {
 type Props = {
     options: CourseFormOptions;
     initial?: Partial<CourseFormValues>;
+    initialCover?: string | null;
     submitUrl: string;
     method: 'post' | 'put';
     submitLabel: string;
@@ -54,28 +55,34 @@ const NONE = 'none';
 export function CourseForm({
     options,
     initial,
+    initialCover,
     submitUrl,
     method,
     submitLabel,
 }: Props) {
-    const { data, setData, post, put, processing, errors } =
-        useForm<CourseFormValues>({
-            title: initial?.title ?? '',
-            subtitle: initial?.subtitle ?? '',
-            description: initial?.description ?? '',
-            category_id: initial?.category_id ?? '',
-            instructor_id: initial?.instructor_id ?? '',
-            price: initial?.price ?? '',
-            max_installments: initial?.max_installments ?? '1',
-            level: initial?.level ?? '',
-            duration_minutes: initial?.duration_minutes ?? '',
-            status: initial?.status ?? 'draft',
-        });
+    const { data, setData, post, processing, errors, transform } = useForm<
+        CourseFormValues & { cover: File | null }
+    >({
+        title: initial?.title ?? '',
+        subtitle: initial?.subtitle ?? '',
+        description: initial?.description ?? '',
+        category_id: initial?.category_id ?? '',
+        instructor_id: initial?.instructor_id ?? '',
+        price: initial?.price ?? '',
+        max_installments: initial?.max_installments ?? '1',
+        level: initial?.level ?? '',
+        duration_minutes: initial?.duration_minutes ?? '',
+        status: initial?.status ?? 'draft',
+        cover: null,
+    });
+
+    transform((d) => (method === 'put' ? { ...d, _method: 'put' } : d));
+
+    const coverPreview = data.cover ? URL.createObjectURL(data.cover) : initialCover;
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
-        const action = method === 'post' ? post : put;
-        action(submitUrl);
+        post(submitUrl, { forceFormData: true });
     }
 
     return (
@@ -123,6 +130,34 @@ export function CourseForm({
                             className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
                         />
                         <InputError message={errors.description} />
+                    </div>
+                </CardContent>
+            </Card>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Capa do curso</CardTitle>
+                    <CardDescription>Imagem apresentada no catálogo e na página do curso.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex items-center gap-4">
+                        <div className="flex aspect-[16/9] w-48 flex-none items-center justify-center overflow-hidden rounded-lg border bg-muted">
+                            {coverPreview ? (
+                                <img src={coverPreview} alt="Capa" className="h-full w-full object-cover" />
+                            ) : (
+                                <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                            )}
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => setData('cover', e.target.files?.[0] ?? null)}
+                                className="block text-sm file:mr-3 file:rounded-md file:border file:bg-muted file:px-3 file:py-1.5 file:text-sm"
+                            />
+                            <p className="text-xs text-muted-foreground">JPG, PNG ou WEBP, até 4 MB.</p>
+                            <InputError message={errors.cover} />
+                        </div>
                     </div>
                 </CardContent>
             </Card>

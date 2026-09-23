@@ -40,6 +40,26 @@ type Props = {
     prevLessonId: number | null;
 };
 
+function embedVideo(url: string): { kind: 'iframe' | 'video'; src: string } {
+    const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/);
+
+    if (yt) {
+return { kind: 'iframe', src: `https://www.youtube.com/embed/${yt[1]}` };
+}
+
+    const vimeo = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+
+    if (vimeo) {
+return { kind: 'iframe', src: `https://player.vimeo.com/video/${vimeo[1]}` };
+}
+
+    if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(url)) {
+return { kind: 'video', src: url };
+}
+
+    return { kind: 'iframe', src: url };
+}
+
 export default function LearnShow({ course, progress, modules, lesson, nextLessonId, prevLessonId }: Props) {
     function goTo(id: number) {
         router.get(`/aprender/${course.slug}/aulas/${id}`);
@@ -79,13 +99,17 @@ return;
                 <div className="flex flex-1 flex-col overflow-hidden">
                     <div className="flex h-[52%] flex-none items-center justify-center bg-[#0F172A]">
                         {lesson?.type === 'video' && lesson.video_url ? (
-                            <iframe
-                                src={lesson.video_url}
-                                title={lesson.title}
-                                className="h-full w-full"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                            />
+                            embedVideo(lesson.video_url).kind === 'video' ? (
+                                <video src={embedVideo(lesson.video_url).src} controls className="h-full w-full" />
+                            ) : (
+                                <iframe
+                                    src={embedVideo(lesson.video_url).src}
+                                    title={lesson.title}
+                                    className="h-full w-full"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                />
+                            )
                         ) : (
                             <div className="flex flex-col items-center gap-2 text-white/50">
                                 {lesson?.type === 'text' ? (

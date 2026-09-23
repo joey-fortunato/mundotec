@@ -25,6 +25,7 @@ export type CourseCardData = {
     instructor?: string | null;
     lessons_count?: number;
     duration_minutes?: number | null;
+    cover?: string | null;
     rating?: number | null;
     ratings_count?: number | null;
 };
@@ -66,17 +67,22 @@ export function CourseCard({ course }: { course: CourseCardData }) {
         <Link href={`/cursos/${course.slug}`} className="group block h-full">
             <Card className="flex h-full flex-col overflow-hidden pt-0 transition-all duration-200 group-hover:-translate-y-0.5 group-hover:shadow-lg">
                 <div className="relative flex aspect-[16/9] items-center justify-center overflow-hidden bg-gradient-to-br from-primary to-primary/70">
-                    <div
-                        className="absolute inset-0 opacity-20"
-                        style={{
-                            backgroundImage:
-                                'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
-                            backgroundSize: '16px 16px',
-                        }}
-                    />
-                    <span className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm">
-                        <Icon className="h-8 w-8 text-white" strokeWidth={1.6} />
-                    </span>
+                    {course.cover ? (
+                        <img src={course.cover} alt={course.title} className="absolute inset-0 h-full w-full object-cover" />
+                    ) : (
+                        <>
+                            <div
+                                className="absolute inset-0 opacity-20"
+                                style={{
+                                    backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
+                                    backgroundSize: '16px 16px',
+                                }}
+                            />
+                            <span className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm">
+                                <Icon className="h-8 w-8 text-white" strokeWidth={1.6} />
+                            </span>
+                        </>
+                    )}
                     {course.category && (
                         <Badge className="absolute top-3 left-3 border-transparent bg-white/90 text-primary hover:bg-white">
                             {course.category}

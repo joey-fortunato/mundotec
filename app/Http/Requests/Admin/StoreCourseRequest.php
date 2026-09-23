@@ -34,6 +34,7 @@ class StoreCourseRequest extends FormRequest
             'level' => ['nullable', 'string', 'max:100'],
             'duration_minutes' => ['nullable', 'integer', 'min:0'],
             'status' => ['required', new Enum(CourseStatus::class)],
+            'cover' => ['nullable', 'image', 'max:4096'],
         ];
     }
 }

@@ -56,6 +56,7 @@ class CourseCatalogController extends Controller
                 'category_slug' => $course->category?->slug,
                 'instructor' => $course->instructor?->name,
                 'lessons_count' => $lessonsCount,
+                'cover' => $course->thumbnailUrl(),
                 'modules' => $course->modules->map(fn ($module) => [
                     'title' => $module->title,
                     'lessons' => $module->lessons->map(fn ($lesson) => [
@@ -86,6 +87,7 @@ class CourseCatalogController extends Controller
             'instructor' => $course->instructor?->name,
             'lessons_count' => $course->lessons_count,
             'duration_minutes' => $course->duration_minutes,
+            'cover' => $course->thumbnailUrl(),
         ];
     }
 }

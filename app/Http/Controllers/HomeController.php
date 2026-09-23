@@ -31,6 +31,7 @@ class HomeController extends Controller
                 'instructor' => $course->instructor?->name,
                 'lessons_count' => $course->lessons_count,
                 'duration_minutes' => $course->duration_minutes,
+                'cover' => $course->thumbnailUrl(),
             ]);
 
         $categories = Category::query()
