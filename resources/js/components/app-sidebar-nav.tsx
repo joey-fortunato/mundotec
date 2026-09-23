@@ -121,8 +121,12 @@ export function AppSidebarNav({ onNavigate }: { onNavigate?: () => void }) {
 
             {auth.user && (
                 <div className="mt-2 flex items-center gap-2.5 border-t pt-3">
-                    <span className="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-primary text-xs font-semibold text-primary-foreground">
-                        {initials(auth.user.name)}
+                    <span className="flex h-9 w-9 flex-none items-center justify-center overflow-hidden rounded-full bg-primary text-xs font-semibold text-primary-foreground">
+                        {auth.user.avatar_url ? (
+                            <img src={auth.user.avatar_url} alt={auth.user.name} className="h-full w-full object-cover" />
+                        ) : (
+                            initials(auth.user.name)
+                        )}
                     </span>
                     <div className="min-w-0 flex-1">
                         <div className="truncate text-sm font-medium">{auth.user.name}</div>

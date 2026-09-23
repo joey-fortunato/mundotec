@@ -7,6 +7,7 @@ export type User = {
     role: UserRole;
     phone?: string | null;
     avatar?: string;
+    avatar_url?: string | null;
     email_verified_at: string | null;
     /* @chisel-2fa */
     two_factor_enabled?: boolean;
