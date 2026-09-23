@@ -48,8 +48,8 @@ class HomeController extends Controller
             'featured' => $featured,
             'categories' => $categories,
             'stats' => [
-                'graduates' => 300,
-                'internships' => 1000,
+                'graduates' => 4000,
+                'internships' => 2000,
                 'courses' => Course::published()->count(),
             ],
         ]);

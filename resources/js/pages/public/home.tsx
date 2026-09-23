@@ -30,9 +30,12 @@ const CATEGORY_ICON: Record<string, LucideIcon> = {
 };
 
 const ELEVA = [
-    ['+300', 'Graduados'],
-    ['+1000', 'Estagiários'],
-    ['+1000', 'Treinamentos'],
+    ['+4.000', 'Formandos Formados'],
+    ['+2.000', 'Estagiários Capacitados'],
+    ['+2.000', 'Treinamentos corporativos'],
+    ['+30', 'Formadores'],
+    ['+40', 'Cursos Ministrados'],
+    ['+20', 'Empresas Parceiras'],
 ];
 
 const TESTIMONIALS = [
@@ -180,11 +183,11 @@ export default function Home({ featured, categories, stats }: { featured: Course
                     <h2 className="text-2xl font-bold text-primary-foreground">Nós Elevamos Você</h2>
                     <p className="mt-2 opacity-85">Resultados que falam por si.</p>
                 </div>
-                <div className="grid gap-6 sm:grid-cols-3">
+                <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-6">
                     {ELEVA.map(([value, label]) => (
                         <div key={label} className="text-center">
-                            <div className="text-4xl font-bold">{value}</div>
-                            <div className="mt-1 opacity-85">{label}</div>
+                            <div className="text-3xl font-bold sm:text-4xl">{value}</div>
+                            <div className="mt-1 text-sm opacity-85">{label}</div>
                         </div>
                     ))}
                 </div>

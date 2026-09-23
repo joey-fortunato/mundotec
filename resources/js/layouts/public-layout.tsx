@@ -19,13 +19,18 @@ const CATEGORIES = [
     { label: 'Administrativos', href: '/cursos?categoria=administrativos' },
 ];
 
-function Brand({ className = '' }: { className?: string }) {
+function Brand({ className = '', dark = false }: { className?: string; dark?: boolean }) {
     return (
         <Link href="/" className={`flex items-center gap-2.5 ${className}`}>
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <span
+                className={`flex h-9 w-9 items-center justify-center rounded-xl ${dark ? 'bg-white text-primary' : 'bg-primary text-primary-foreground'}`}
+            >
                 <GraduationCap className="h-5 w-5" />
             </span>
-            <span className="text-lg leading-tight font-bold" style={{ fontFamily: 'Sora, sans-serif' }}>
+            <span
+                className={`text-lg leading-tight font-bold ${dark ? 'text-white' : ''}`}
+                style={{ fontFamily: 'Sora, sans-serif' }}
+            >
                 Mundo da Tecnologia
             </span>
         </Link>
@@ -92,11 +97,11 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
 
             <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">{children}</main>
 
-            <footer className="mt-8 border-t bg-muted/30">
+            <footer className="mt-8 bg-primary text-primary-foreground">
                 <div className="mx-auto grid w-full max-w-6xl gap-8 px-4 py-12 sm:grid-cols-2 lg:grid-cols-4">
                     <div>
-                        <Brand />
-                        <p className="mt-4 max-w-xs text-sm text-muted-foreground">
+                        <Brand dark />
+                        <p className="mt-4 max-w-xs text-sm text-primary-foreground/80">
                             Elevando você. Formação profissional certificada, estágios e treinamentos para empresas.
                         </p>
                         <div className="mt-4 flex gap-2">
@@ -104,7 +109,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                                 <a
                                     key={i}
                                     href="#"
-                                    className="flex h-9 w-9 items-center justify-center rounded-lg border text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+                                    className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/25 text-white transition-colors hover:bg-white hover:text-primary"
                                     aria-label="Rede social"
                                 >
                                     <Icon className="h-4 w-4" />
@@ -114,11 +119,11 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     </div>
 
                     <div>
-                        <h3 className="text-sm font-semibold">Links rápidos</h3>
-                        <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
+                        <h3 className="text-sm font-semibold text-white">Links rápidos</h3>
+                        <ul className="mt-3 flex flex-col gap-2 text-sm text-primary-foreground/80">
                             {NAV.map((item) => (
                                 <li key={item.href}>
-                                    <Link href={item.href} className="hover:text-foreground">
+                                    <Link href={item.href} className="hover:text-white">
                                         {item.label}
                                     </Link>
                                 </li>
@@ -127,11 +132,11 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     </div>
 
                     <div>
-                        <h3 className="text-sm font-semibold">Cursos</h3>
-                        <ul className="mt-3 flex flex-col gap-2 text-sm text-muted-foreground">
+                        <h3 className="text-sm font-semibold text-white">Cursos</h3>
+                        <ul className="mt-3 flex flex-col gap-2 text-sm text-primary-foreground/80">
                             {CATEGORIES.map((item) => (
                                 <li key={item.href}>
-                                    <Link href={item.href} className="hover:text-foreground">
+                                    <Link href={item.href} className="hover:text-white">
                                         {item.label}
                                     </Link>
                                 </li>
@@ -140,31 +145,31 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     </div>
 
                     <div>
-                        <h3 className="text-sm font-semibold">Contactos</h3>
-                        <ul className="mt-3 flex flex-col gap-3 text-sm text-muted-foreground">
+                        <h3 className="text-sm font-semibold text-white">Contactos</h3>
+                        <ul className="mt-3 flex flex-col gap-3 text-sm text-primary-foreground/80">
                             <li className="flex gap-2.5">
-                                <MapPin className="mt-0.5 h-4 w-4 flex-none text-primary" />
+                                <MapPin className="mt-0.5 h-4 w-4 flex-none text-white" />
                                 <span>Rangel, Vila Alice, Rua João de Deus, Luanda · Zango III, Primeira Paragem</span>
                             </li>
                             <li className="flex gap-2.5">
-                                <Phone className="mt-0.5 h-4 w-4 flex-none text-primary" />
+                                <Phone className="mt-0.5 h-4 w-4 flex-none text-white" />
                                 <span>932 407 153 · 922 900 498</span>
                             </li>
                             <li className="flex gap-2.5">
-                                <Mail className="mt-0.5 h-4 w-4 flex-none text-primary" />
+                                <Mail className="mt-0.5 h-4 w-4 flex-none text-white" />
                                 <span>geral@mundotec.ao</span>
                             </li>
                         </ul>
                     </div>
                 </div>
-                <div className="border-t">
-                    <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-muted-foreground sm:flex-row">
+                <div className="border-t border-white/15">
+                    <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-between gap-2 px-4 py-5 text-xs text-primary-foreground/70 sm:flex-row">
                         <span>© {new Date().getFullYear()} Mundo da Tecnologia · Todos os direitos reservados</span>
                         <span className="flex gap-4">
-                            <a href="#" className="hover:text-foreground">
+                            <a href="#" className="hover:text-white">
                                 Termos
                             </a>
-                            <a href="#" className="hover:text-foreground">
+                            <a href="#" className="hover:text-white">
                                 Privacidade
                             </a>
                         </span>

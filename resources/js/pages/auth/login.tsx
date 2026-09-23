@@ -13,9 +13,6 @@ import { register } from '@/routes';
 /* @end-chisel-registration */
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
-/* @chisel-passkeys */
-import PasskeyVerify from '@/components/passkey-verify';
-/* @end-chisel-passkeys */
 
 type Props = {
     status?: string;
@@ -28,10 +25,6 @@ export default function Login({ status, canResetPassword }: Props) {
             <Head title="Entrar" />
 
             <div className="flex flex-col gap-6 rounded-xl border bg-card p-6 shadow-sm">
-                {/* @chisel-passkeys */}
-                <PasskeyVerify label="Entrar com passkey" loadingLabel="A verificar…" separator="ou continuar com email" />
-                {/* @end-chisel-passkeys */}
-
                 <Form
                     {...store.form()}
                     resetOnSuccess={['password']}

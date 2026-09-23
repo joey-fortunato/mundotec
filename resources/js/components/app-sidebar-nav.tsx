@@ -6,11 +6,11 @@ import {
     CreditCard,
     GraduationCap,
     LayoutGrid,
+    LogOut,
     PlayCircle,
     Settings,
     Tags,
-    Users
-    
+    Users,
 } from 'lucide-react';
 import type {LucideIcon} from 'lucide-react';
 import { useCurrentUrl } from '@/hooks/use-current-url';
@@ -126,8 +126,14 @@ export function AppSidebarNav({ onNavigate }: { onNavigate?: () => void }) {
                         <div className="truncate text-sm font-medium">{auth.user.name}</div>
                         <div className="truncate text-xs text-muted-foreground">{ROLE_LABEL[auth.user.role] ?? 'Aluno'}</div>
                     </div>
-                    <Link href="/settings/profile" onClick={onNavigate} className="text-muted-foreground hover:text-foreground" aria-label="Definições">
-                        <Settings className="h-4 w-4" />
+                    <Link
+                        href="/logout"
+                        method="post"
+                        as="button"
+                        className="text-muted-foreground hover:text-destructive"
+                        aria-label="Sair"
+                    >
+                        <LogOut className="h-4 w-4" />
                     </Link>
                 </div>
             )}
