@@ -77,12 +77,19 @@ class CourseController extends Controller
                 'title' => $course->title,
                 'slug' => $course->slug,
                 'subtitle' => $course->subtitle,
+                'description' => $course->description,
+                'category' => $course->category?->name,
+                'category_id' => $course->category_id,
+                'instructor' => $course->instructor?->name,
+                'instructor_id' => $course->instructor_id,
                 'status' => $course->status->value,
                 'status_label' => $course->status->label(),
                 'price' => $course->price,
                 'currency' => $course->currency,
-                'category' => $course->category?->name,
-                'instructor' => $course->instructor?->name,
+                'max_installments' => $course->max_installments,
+                'level' => $course->level,
+                'duration_minutes' => $course->duration_minutes,
+                'cover' => $course->thumbnailUrl(),
                 'modules' => $course->modules->map(fn ($module) => [
                     'id' => $module->id,
                     'title' => $module->title,
@@ -97,6 +104,7 @@ class CourseController extends Controller
                     ]),
                 ]),
             ],
+            'options' => $this->formOptions(),
         ]);
     }
 

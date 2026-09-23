@@ -145,7 +145,7 @@ export default function CoursesIndex({ courses }: { courses: CourseRow[] }) {
                                                     size="icon"
                                                 >
                                                     <Link
-                                                        href={`/admin/courses/${course.slug}/edit`}
+                                                        href={`/admin/courses/${course.slug}`}
                                                         aria-label="Editar"
                                                     >
                                                         <Pencil className="h-4 w-4" />
