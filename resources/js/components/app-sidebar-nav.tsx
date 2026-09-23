@@ -10,6 +10,7 @@ import {
     PlayCircle,
     Settings,
     Tags,
+    UserCog,
     Users,
 } from 'lucide-react';
 import type {LucideIcon} from 'lucide-react';
@@ -53,6 +54,7 @@ const ADMIN_GROUPS: Group[] = [
         label: 'Gestão',
         items: [
             { title: 'Inscrições', href: '/admin/inscricoes', icon: ClipboardList },
+            { title: 'Utilizadores', href: '/admin/users', icon: UserCog },
             { title: 'Pagamentos', href: '/admin/pagamentos', icon: CreditCard },
             { title: 'Definições', href: '/settings/profile', icon: Settings },
         ],

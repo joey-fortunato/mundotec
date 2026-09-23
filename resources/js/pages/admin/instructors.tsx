@@ -1,6 +1,7 @@
-import { Head } from '@inertiajs/react';
-import { GraduationCap } from 'lucide-react';
+import { Head, Link } from '@inertiajs/react';
+import { GraduationCap, UserPlus } from 'lucide-react';
 import Heading from '@/components/heading';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 type Instructor = { name: string; email: string; courses: number };
@@ -13,7 +14,14 @@ export default function AdminInstructors({ instructors }: { instructors: Instruc
     return (
         <div className="flex flex-col gap-4 p-4">
             <Head title="Instrutores" />
-            <Heading title="Instrutores" description="Formadores responsáveis pelos cursos." />
+            <div className="flex items-center justify-between">
+                <Heading title="Instrutores" description="Formadores responsáveis pelos cursos." />
+                <Button asChild>
+                    <Link href="/admin/users/create">
+                        <UserPlus className="mr-2 h-4 w-4" /> Novo instrutor
+                    </Link>
+                </Button>
+            </div>
 
             {instructors.length === 0 ? (
                 <Card className="flex flex-col items-center gap-2 p-10 text-center text-muted-foreground">

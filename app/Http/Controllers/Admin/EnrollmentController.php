@@ -2,8 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\EnrollmentStatus;
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
+use App\Models\Course;
 use App\Models\Enrollment;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -28,6 +34,29 @@ class EnrollmentController extends Controller
 
         return Inertia::render('admin/enrollments', [
             'enrollments' => $enrollments,
+            'students' => User::where('role', UserRole::Student)->orderBy('name')->get(['id', 'name']),
+            'courses' => Course::orderBy('title')->get(['id', 'title']),
         ]);
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'user_id' => ['required', 'exists:users,id'],
+            'course_id' => ['required', 'exists:courses,id'],
+        ]);
+
+        $course = Course::findOrFail($data['course_id']);
+
+        Enrollment::firstOrCreate(
+            ['user_id' => $data['user_id'], 'course_id' => $data['course_id']],
+            [
+                'status' => EnrollmentStatus::Active,
+                'enrolled_at' => now(),
+                'price_paid' => $course->price,
+            ],
+        );
+
+        return back()->with('success', 'Inscrição criada. O acesso ao curso foi libertado.');
     }
 }
