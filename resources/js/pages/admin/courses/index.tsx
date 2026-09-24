@@ -1,9 +1,12 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { Pencil, Plus, Search, Trash2 } from 'lucide-react';
+import { useMemo, useState } from 'react';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type CourseRow = {
     id: number;
@@ -31,6 +34,10 @@ const statusVariant: Record<string, 'default' | 'secondary' | 'outline'> = {
 };
 
 export default function CoursesIndex({ courses }: { courses: CourseRow[] }) {
+    const [query, setQuery] = useState('');
+    const [status, setStatus] = useState('all');
+    const [selected, setSelected] = useState<number[]>([]);
+    const filteredCourses = useMemo(() => courses.filter(course => (status === 'all' || course.status === status) && `${course.title} ${course.category ?? ''}`.toLowerCase().includes(query.toLowerCase())), [courses, query, status]);
     function remove(course: CourseRow) {
         if (
             confirm(
@@ -57,7 +64,10 @@ export default function CoursesIndex({ courses }: { courses: CourseRow[] }) {
                     </Button>
                 </div>
 
-                {courses.length === 0 ? (
+                <div className="flex flex-col gap-3 sm:flex-row"><div className="relative flex-1"><Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input value={query} onChange={event => setQuery(event.target.value)} className="pl-9" placeholder="Pesquisar por curso ou categoria…" /></div><select value={status} onChange={event => setStatus(event.target.value)} className="h-9 rounded-md border bg-background px-3 text-sm"><option value="all">Todos os estados</option><option value="published">Publicados</option><option value="draft">Rascunhos</option><option value="archived">Arquivados</option></select></div>
+                {selected.length > 0 && <div className="flex items-center justify-between rounded-lg bg-primary/10 px-3 py-2 text-sm text-primary"><span>{selected.length} curso(s) selecionado(s)</span><Button size="sm" variant="ghost" onClick={() => setSelected([])}>Limpar seleção</Button></div>}
+
+                {filteredCourses.length === 0 ? (
                     <Card className="flex flex-col items-center gap-3 p-10 text-center">
                         <p className="text-muted-foreground">
                             Ainda não há cursos.
@@ -74,6 +84,7 @@ export default function CoursesIndex({ courses }: { courses: CourseRow[] }) {
                         <table className="w-full text-sm">
                             <thead className="border-b bg-muted/50 text-left">
                                 <tr>
+                                    <th className="w-10 px-4 py-3"><Checkbox checked={filteredCourses.length > 0 && filteredCourses.every(course => selected.includes(course.id))} onCheckedChange={checked => setSelected(checked === true ? filteredCourses.map(course => course.id) : [])} aria-label="Selecionar todos os cursos" /></th>
                                     <th className="px-4 py-3 font-medium">
                                         Curso
                                     </th>
@@ -98,11 +109,12 @@ export default function CoursesIndex({ courses }: { courses: CourseRow[] }) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {courses.map((course) => (
+                                {filteredCourses.map((course) => (
                                     <tr
                                         key={course.id}
                                         className="border-b last:border-0 hover:bg-muted/30"
                                     >
+                                        <td className="px-4 py-3"><Checkbox checked={selected.includes(course.id)} onCheckedChange={checked => setSelected(checked === true ? [...selected, course.id] : selected.filter(id => id !== course.id))} aria-label={`Selecionar ${course.title}`} /></td>
                                         <td className="px-4 py-3">
                                             <Link
                                                 href={`/admin/courses/${course.slug}`}

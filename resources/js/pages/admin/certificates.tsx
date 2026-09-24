@@ -1,4 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
+import { PencilRuler } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import Heading from '@/components/heading';
 import { Card } from '@/components/ui/card';
 
@@ -8,7 +10,7 @@ export default function AdminCertificates({ certificates }: { certificates: Cert
     return (
         <div className="flex flex-col gap-4 p-4">
             <Head title="Certificados" />
-            <Heading title="Certificados" description="Certificados emitidos aos alunos na conclusão dos cursos." />
+            <div className="flex flex-wrap items-center justify-between gap-3"><Heading title="Certificados" description="Certificados emitidos aos alunos na conclusão dos cursos." /><Button asChild variant="outline"><Link href="/admin/certificados/modelo"><PencilRuler className="mr-2 h-4 w-4" />Construtor do modelo</Link></Button></div>
 
             {certificates.length === 0 ? (
                 <Card className="p-10 text-center text-muted-foreground">Ainda não foram emitidos certificados.</Card>

@@ -148,4 +148,44 @@
     h3 {
         font-family: var(--font-display);
     }
+
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: color-mix(in oklab, var(--primary) 45%, transparent) transparent;
+    }
+
+    *::-webkit-scrollbar { width: 10px; height: 10px; }
+    *::-webkit-scrollbar-track { background: transparent; }
+    *::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--primary) 36%, transparent); border: 3px solid transparent; background-clip: padding-box; border-radius: 999px; }
+    *::-webkit-scrollbar-thumb:hover { background: color-mix(in oklab, var(--primary) 65%, transparent); border: 3px solid transparent; background-clip: padding-box; }
+    input[type='file']::file-selector-button { margin-right: .75rem; border: 0; border-radius: .5rem; background: color-mix(in oklab, var(--primary) 12%, transparent); padding: .45rem .7rem; color: var(--primary); font: inherit; font-weight: 600; transition: background .2s ease; }
+    input[type='file']:hover::file-selector-button { background: color-mix(in oklab, var(--primary) 20%, transparent); }
 }
+
+@keyframes mundotec-marquee { to { transform: translateX(-50%); } }
+
+.partner-track, .testimonial-track { display: flex; width: max-content; gap: 1rem; animation: mundotec-marquee 34s linear infinite; }
+.partner-track:hover, .testimonial-track:hover { animation-play-state: paused; }
+.partner-logo { display: flex; height: 6rem; width: 12rem; flex: none; align-items: center; justify-content: center; padding: 1.25rem; }
+.partner-logo img { max-height: 100%; max-width: 100%; object-fit: contain; filter: grayscale(1); opacity: .8; transition: filter .2s ease, opacity .2s ease; }
+.partner-logo:hover img { filter: grayscale(0); opacity: 1; }
+.public-header a:active, .public-header button:active { transform: translateY(1px) scale(.96) !important; transition-duration: 0ms !important; }
+.home-orbit { position: absolute; display: flex; align-items: center; justify-content: center; border-radius: 9999px; pointer-events: none; }
+.home-orbit svg { width: 42%; height: 42%; }
+.home-orbit-top { right: -6rem; top: -5rem; width: 17rem; height: 17rem; border: 1px solid color-mix(in oklab, var(--primary) 16%, transparent); color: color-mix(in oklab, var(--primary) 13%, transparent); }
+.home-orbit-light { right: -5rem; bottom: -7rem; width: 17rem; height: 17rem; border: 1px solid rgb(255 255 255 / .16); color: rgb(255 255 255 / .14); }
+.home-orbit-category { left: -5rem; bottom: -6rem; width: 15rem; height: 15rem; border: 1px solid color-mix(in oklab, var(--primary) 10%, transparent); color: color-mix(in oklab, var(--primary) 8%, transparent); }
+.home-orbit-testimonial { right: -4rem; top: 1rem; width: 12rem; height: 12rem; border: 1px dashed color-mix(in oklab, var(--primary) 15%, transparent); color: color-mix(in oklab, var(--primary) 10%, transparent); }
+.home-orbit-faq { left: -4rem; top: 1rem; width: 13rem; height: 13rem; border: 1px solid color-mix(in oklab, var(--primary) 11%, transparent); color: color-mix(in oklab, var(--primary) 9%, transparent); }
+.home-orbit-cta { right: -2.5rem; top: -5rem; width: 13rem; height: 13rem; border: 1px solid color-mix(in oklab, var(--primary) 16%, transparent); color: color-mix(in oklab, var(--primary) 10%, transparent); }
+.auth-scene::before, .auth-scene::after { position: absolute; border-radius: 9999px; content: ''; pointer-events: none; }
+.auth-scene::before { top: -12rem; right: -10rem; width: 29rem; height: 29rem; background: radial-gradient(circle, color-mix(in oklab, var(--primary) 15%, transparent), transparent 67%); }
+.auth-scene::after { bottom: -14rem; left: -12rem; width: 32rem; height: 32rem; background: radial-gradient(circle, color-mix(in oklab, var(--primary) 11%, transparent), transparent 68%); }
+.auth-orbit { position: absolute; display: flex; align-items: center; justify-content: center; border-radius: 9999px; pointer-events: none; color: color-mix(in oklab, var(--primary) 20%, transparent); }
+.auth-orbit svg { width: 38%; height: 38%; }
+.auth-orbit-one { top: 9%; left: 8%; width: 12rem; height: 12rem; border: 1px solid color-mix(in oklab, var(--primary) 15%, transparent); }
+.auth-orbit-two { right: 10%; bottom: 7%; width: 15rem; height: 15rem; border: 1px dashed color-mix(in oklab, var(--primary) 16%, transparent); }
+.auth-orbit-three { top: 24%; right: 16%; width: 5rem; height: 5rem; border: 1px solid color-mix(in oklab, var(--primary) 13%, transparent); }
+.auth-spark { position: absolute; color: color-mix(in oklab, var(--primary) 26%, transparent); pointer-events: none; }
+.auth-spark-one { bottom: 18%; left: 22%; }
+@media (max-width: 640px) { .auth-orbit-one { left: -4rem; } .auth-orbit-two { right: -6rem; } .auth-orbit-three { right: 4%; top: 11%; } }

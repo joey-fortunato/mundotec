@@ -27,6 +27,7 @@ type CurrentLesson = {
     type_label: string;
     content: string | null;
     video_url: string | null;
+    attachment_url: string | null;
     completed: boolean;
     module_title: string;
 } | null;
@@ -154,6 +155,7 @@ return;
                                         {lesson.content}
                                     </p>
                                 )}
+                                {lesson.type === 'pdf' && lesson.attachment_url && <iframe src={lesson.attachment_url} title={lesson.title} className="mt-5 h-[520px] w-full rounded-lg border" />}
                             </>
                         ) : (
                             <p className="text-muted-foreground">Este curso ainda não tem aulas.</p>

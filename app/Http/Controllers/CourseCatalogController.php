@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Enums\CourseStatus;
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\Enrollment;
+use App\Enums\EnrollmentStatus;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -17,6 +19,8 @@ class CourseCatalogController extends Controller
             ->published()
             ->with(['category:id,name,slug', 'instructor:id,name'])
             ->withCount('lessons')
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
             ->when($request->string('categoria')->toString(), function ($query, string $slug) {
                 $query->whereHas('category', fn ($q) => $q->where('slug', $slug));
             })
@@ -33,11 +37,13 @@ class CourseCatalogController extends Controller
         ]);
     }
 
-    public function show(Course $course): Response
+    public function show(Request $request, Course $course): Response
     {
         abort_unless($course->status === CourseStatus::Published, 404);
 
         $course->load(['modules.lessons', 'category:id,name,slug', 'instructor:id,name']);
+        $course->loadAvg('reviews', 'rating')->loadCount('reviews');
+        $review = $request->user() ? Enrollment::query()->where('course_id', $course->id)->where('user_id', $request->user()->id)->where('status', EnrollmentStatus::Completed)->with('course')->first() : null;
 
         $lessonsCount = $course->modules->sum(fn ($module) => $module->lessons->count());
 
@@ -57,6 +63,9 @@ class CourseCatalogController extends Controller
                 'instructor' => $course->instructor?->name,
                 'lessons_count' => $lessonsCount,
                 'cover' => $course->thumbnailUrl(),
+                'rating' => $course->reviews_avg_rating ? round((float) $course->reviews_avg_rating, 1) : null,
+                'reviews_count' => $course->reviews_count,
+                'can_review' => (bool) $review,
                 'modules' => $course->modules->map(fn ($module) => [
                     'title' => $module->title,
                     'lessons' => $module->lessons->map(fn ($lesson) => [
@@ -88,6 +97,8 @@ class CourseCatalogController extends Controller
             'lessons_count' => $course->lessons_count,
             'duration_minutes' => $course->duration_minutes,
             'cover' => $course->thumbnailUrl(),
+            'rating' => $course->reviews_avg_rating ? round((float) $course->reviews_avg_rating, 1) : null,
+            'reviews_count' => $course->reviews_count,
         ];
     }
 }

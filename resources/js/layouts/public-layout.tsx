@@ -21,7 +21,7 @@ const CATEGORIES = [
 
 function Brand({ className = '', dark = false }: { className?: string; dark?: boolean }) {
     return (
-        <Link href="/" className={`flex items-center gap-2.5 ${className}`}>
+        <Link href="/" className={`group flex items-center gap-2.5 rounded-xl transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98] ${className}`}>
             <span
                 className={`flex h-9 w-9 items-center justify-center rounded-xl ${dark ? 'bg-white text-primary' : 'bg-primary text-primary-foreground'}`}
             >
@@ -40,7 +40,7 @@ function Brand({ className = '', dark = false }: { className?: string; dark?: bo
 export default function PublicLayout({ children }: { children: ReactNode }) {
     return (
         <div className="flex min-h-screen flex-col bg-background text-foreground">
-            <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
+            <header className="public-header sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
                 <div className="mx-auto flex w-full max-w-6xl items-center gap-6 px-4 py-3.5">
                     <Brand />
                     <nav className="ml-4 hidden items-center gap-1 lg:flex">
@@ -48,24 +48,24 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                             <Link
                                 key={item.href}
                                 href={item.href}
-                                className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+                                className="rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-all duration-200 hover:bg-primary/10 hover:text-primary active:scale-95"
                             >
                                 {item.label}
                             </Link>
                         ))}
                     </nav>
                     <div className="ml-auto hidden items-center gap-2 md:flex">
-                        <Button asChild variant="ghost" size="sm">
+                        <Button asChild variant="ghost" size="sm" className="transition-transform hover:bg-primary/10 hover:text-primary active:scale-95">
                             <Link href="/login">Entrar</Link>
                         </Button>
-                        <Button asChild size="sm">
+                        <Button asChild size="sm" className="shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-95">
                             <Link href="/register">Criar conta</Link>
                         </Button>
                     </div>
 
                     <Sheet>
                         <SheetTrigger asChild>
-                            <Button variant="outline" size="icon" className="ml-auto lg:hidden" aria-label="Menu">
+                            <Button variant="outline" size="icon" className="ml-auto transition-all hover:border-primary hover:bg-primary/10 hover:text-primary active:scale-95 lg:hidden" aria-label="Menu">
                                 <Menu className="h-5 w-5" />
                             </Button>
                         </SheetTrigger>
@@ -76,16 +76,16 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                                     <Link
                                         key={item.href}
                                         href={item.href}
-                                        className="rounded-md px-2 py-2.5 text-sm font-medium hover:bg-muted"
+                                        className="rounded-md px-2 py-2.5 text-sm font-medium transition-all hover:bg-primary/10 hover:pl-3 hover:text-primary active:scale-[.98]"
                                     >
                                         {item.label}
                                     </Link>
                                 ))}
                                 <div className="mt-4 flex flex-col gap-2 px-1">
-                                    <Button asChild variant="outline">
+                                    <Button asChild variant="outline" className="transition-all hover:border-primary hover:bg-primary/10 active:scale-[.98]">
                                         <Link href="/login">Entrar</Link>
                                     </Button>
-                                    <Button asChild>
+                                    <Button asChild className="transition-all hover:-translate-y-0.5 hover:shadow-md active:translate-y-0 active:scale-[.98]">
                                         <Link href="/register">Criar conta</Link>
                                     </Button>
                                 </div>
@@ -123,7 +123,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                         <ul className="mt-3 flex flex-col gap-2 text-sm text-primary-foreground/80">
                             {NAV.map((item) => (
                                 <li key={item.href}>
-                                    <Link href={item.href} className="hover:text-white">
+                                    <Link href={item.href} className="transition-colors hover:text-white active:opacity-70">
                                         {item.label}
                                     </Link>
                                 </li>
@@ -136,7 +136,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                         <ul className="mt-3 flex flex-col gap-2 text-sm text-primary-foreground/80">
                             {CATEGORIES.map((item) => (
                                 <li key={item.href}>
-                                    <Link href={item.href} className="hover:text-white">
+                                    <Link href={item.href} className="transition-colors hover:text-white active:opacity-70">
                                         {item.label}
                                     </Link>
                                 </li>

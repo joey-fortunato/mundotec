@@ -1,5 +1,5 @@
 import { Head } from '@inertiajs/react';
-import { Award, TrendingUp, UserPlus, Users } from 'lucide-react';
+import { Award, BarChart3, TrendingUp, UserPlus, Users } from 'lucide-react';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,6 +7,7 @@ import { Card, CardContent } from '@/components/ui/card';
 type Props = {
     stats: { revenue: string; new_students: number; active_enrollments: number; certificates: number };
     topCourses: { title: string; enrollments: number }[];
+    monthlyActivity: { label: string; revenue: number; enrollments: number }[];
     recent: { student: string; course: string; status: string; status_label: string; date: string | null }[];
 };
 
@@ -22,7 +23,7 @@ const statusVariant: Record<string, 'default' | 'secondary' | 'outline'> = {
     completed: 'outline',
 };
 
-export default function AdminDashboard({ stats, topCourses, recent }: Props) {
+export default function AdminDashboard({ stats, topCourses, monthlyActivity, recent }: Props) {
     const max = Math.max(1, ...topCourses.map((c) => c.enrollments));
     const cards = [
         [TrendingUp, 'Receita (mês)', `${compact(stats.revenue)} AOA`],
@@ -50,6 +51,36 @@ export default function AdminDashboard({ stats, topCourses, recent }: Props) {
             </div>
 
             <div className="grid gap-4 lg:grid-cols-2">
+                <Card className="lg:col-span-2">
+                    <CardContent className="pt-6">
+                        <div className="mb-5 flex items-center justify-between">
+                            <div>
+                                <h3 className="font-semibold">Crescimento da plataforma</h3>
+                                <p className="mt-1 text-sm text-muted-foreground">Receita confirmada e inscrições dos últimos seis meses.</p>
+                            </div>
+                            <BarChart3 className="h-5 w-5 text-primary" />
+                        </div>
+                        <div className="grid h-44 grid-cols-6 items-end gap-3 border-b border-dashed pb-1">
+                            {monthlyActivity.map((month) => {
+                                const revenueMax = Math.max(1, ...monthlyActivity.map((item) => item.revenue));
+                                const enrollmentMax = Math.max(1, ...monthlyActivity.map((item) => item.enrollments));
+                                const revenueHeight = Math.max(4, (month.revenue / revenueMax) * 100);
+                                const enrollmentHeight = Math.max(4, (month.enrollments / enrollmentMax) * 100);
+
+                                return (
+                                    <div key={month.label} className="group flex h-full min-w-0 flex-col justify-end gap-1.5 text-center">
+                                        <div className="relative flex h-full items-end justify-center gap-1">
+                                            <div className="w-3 rounded-t bg-primary/25 transition-all group-hover:bg-primary/40" style={{ height: `${enrollmentHeight}%` }} title={`${month.enrollments} inscrições`} />
+                                            <div className="w-3 rounded-t bg-primary transition-all group-hover:bg-primary/75" style={{ height: `${revenueHeight}%` }} title={`${compact(String(month.revenue))} AOA`} />
+                                        </div>
+                                        <span className="text-xs text-muted-foreground">{month.label}</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <div className="mt-3 flex gap-4 text-xs text-muted-foreground"><span><i className="mr-1 inline-block h-2 w-2 rounded-sm bg-primary/25" />Inscrições</span><span><i className="mr-1 inline-block h-2 w-2 rounded-sm bg-primary" />Receita</span></div>
+                    </CardContent>
+                </Card>
                 <Card>
                     <CardContent className="pt-6">
                         <h3 className="mb-4 font-semibold">Cursos mais vendidos</h3>

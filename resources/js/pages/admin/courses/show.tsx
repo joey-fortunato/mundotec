@@ -3,7 +3,7 @@ import { ChevronLeft, FileText, Film, Trash2, Video } from 'lucide-react';
 import { useState } from 'react';
 import { CourseForm } from '@/components/admin/course-form';
 import type { CourseFormOptions, CourseFormValues } from '@/components/admin/course-form';
-import { AddLessonDialog } from '@/components/admin/lesson-dialog';
+import { AddLessonDialog, EditLessonDialog } from '@/components/admin/lesson-dialog';
 import { AddModuleDialog } from '@/components/admin/module-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -151,9 +151,12 @@ export default function CourseShow({ course, options }: { course: Course; option
                                                             <Badge variant="outline" className="text-xs">{lesson.type_label}</Badge>
                                                             {lesson.is_preview && <Badge variant="secondary" className="text-xs">Prévia</Badge>}
                                                         </div>
-                                                        <Button variant="ghost" size="icon" onClick={() => removeLesson(module, lesson)} aria-label="Remover aula">
-                                                            <Trash2 className="h-4 w-4 text-destructive" />
-                                                        </Button>
+                                                        <div className="flex items-center">
+                                                            <EditLessonDialog courseSlug={course.slug} moduleId={module.id} lesson={lesson} />
+                                                            <Button variant="ghost" size="icon" onClick={() => removeLesson(module, lesson)} aria-label="Remover aula">
+                                                                <Trash2 className="h-4 w-4 text-destructive" />
+                                                            </Button>
+                                                        </div>
                                                     </div>
                                                 );
                                             })

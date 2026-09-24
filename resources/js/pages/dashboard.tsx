@@ -50,7 +50,7 @@ export default function Dashboard() {
 
             <div className="grid gap-4 sm:grid-cols-3">
                 <Card>
-                    <CardContent className="pt-6">
+                    <CardContent className="pt-6 transition-transform duration-200 hover:-translate-y-1">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <PlayCircle className="h-4 w-4 text-primary" /> Cursos ativos
                         </div>
@@ -58,7 +58,7 @@ export default function Dashboard() {
                     </CardContent>
                 </Card>
                 <Card>
-                    <CardContent className="pt-6">
+                    <CardContent className="pt-6 transition-transform duration-200 hover:-translate-y-1">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <CheckCircle2 className="h-4 w-4 text-green-600" /> Aulas concluídas
                         </div>
@@ -66,7 +66,7 @@ export default function Dashboard() {
                     </CardContent>
                 </Card>
                 <Card>
-                    <CardContent className="pt-6">
+                    <CardContent className="pt-6 transition-transform duration-200 hover:-translate-y-1">
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <Award className="h-4 w-4 text-primary" /> Certificados
                         </div>
@@ -90,6 +90,15 @@ export default function Dashboard() {
                                 <Smartphone className="mr-2 h-4 w-4" /> Pagar com Multicaixa Express
                             </Link>
                         </Button>
+                    </CardContent>
+                </Card>
+            )}
+
+            {!cont && !pendingPayment && (
+                <Card className="overflow-hidden border-primary/20 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent">
+                    <CardContent className="flex flex-col gap-4 pt-6 sm:flex-row sm:items-center sm:justify-between">
+                        <div><div className="font-semibold">A tua próxima competência começa aqui.</div><p className="mt-1 text-sm text-muted-foreground">Explora as formações disponíveis e adiciona um curso ao teu percurso.</p></div>
+                        <Button asChild><Link href="/cursos">Explorar cursos</Link></Button>
                     </CardContent>
                 </Card>
             )}

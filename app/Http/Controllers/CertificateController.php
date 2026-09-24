@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Certificate;
+use App\Models\SiteSetting;
+use App\Http\Controllers\Admin\CertificateController as AdminCertificateController;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -58,6 +60,7 @@ class CertificateController extends Controller
                 ? (int) round($certificate->course->duration_minutes / 60)
                 : null,
             'issued_at' => $certificate->issued_at->translatedFormat('d \d\e F \d\e Y'),
+            'design' => AdminCertificateController::presentationDesign(SiteSetting::valueFor('certificate_design', AdminCertificateController::defaultDesign())),
         ];
     }
 }

@@ -48,6 +48,7 @@ const ADMIN_GROUPS: Group[] = [
             { title: 'Categorias', href: '/admin/categories', icon: Tags },
             { title: 'Certificados', href: '/admin/certificados', icon: Award },
             { title: 'Instrutores', href: '/admin/instrutores', icon: Users },
+            { title: 'Página inicial', href: '/admin/pagina-inicial', icon: Compass },
         ],
     },
     {
@@ -59,6 +60,11 @@ const ADMIN_GROUPS: Group[] = [
             { title: 'Definições', href: '/settings/profile', icon: Settings },
         ],
     },
+];
+
+const INSTRUCTOR_GROUPS: Group[] = [
+    { label: 'Ensino', items: [{ title: 'Painel', href: '/instrutor', icon: LayoutGrid }] },
+    { label: 'Conta', items: [{ title: 'Definições', href: '/settings/profile', icon: Settings }] },
 ];
 
 const ROLE_LABEL: Record<string, string> = {
@@ -75,8 +81,9 @@ export function AppSidebarNav({ onNavigate }: { onNavigate?: () => void }) {
     const { auth } = usePage().props;
     const { isCurrentUrl } = useCurrentUrl();
     const isAdmin = auth.user?.role === 'admin';
-    const groups = isAdmin ? ADMIN_GROUPS : STUDENT_GROUPS;
-    const homeHref = isAdmin ? '/admin' : dashboard().url;
+    const isInstructor = auth.user?.role === 'instructor';
+    const groups = isAdmin ? ADMIN_GROUPS : isInstructor ? INSTRUCTOR_GROUPS : STUDENT_GROUPS;
+    const homeHref = isAdmin ? '/admin' : isInstructor ? '/instrutor' : dashboard().url;
 
     return (
         <div className="flex h-full flex-col p-3">

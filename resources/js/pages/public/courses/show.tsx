@@ -10,6 +10,7 @@ import {
     Megaphone,
     Network,
     PlayCircle,
+    Star,
     Users
     
 } from 'lucide-react';
@@ -18,6 +19,7 @@ import PublicLayout from '@/layouts/public-layout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { CourseReviewForm } from '@/components/course-review-form';
 
 type Lesson = { title: string; type_label: string; duration_minutes: number | null; is_preview: boolean };
 type Module = { title: string; lessons: Lesson[] };
@@ -38,6 +40,9 @@ type Course = {
     lessons_count: number;
     cover: string | null;
     modules: Module[];
+    rating: number | null;
+    reviews_count: number;
+    can_review: boolean;
 };
 
 const CATEGORY_ICON: Record<string, LucideIcon> = {
@@ -95,6 +100,7 @@ export default function CatalogShow({ course }: { course: Course }) {
                                 <Clock className="h-4 w-4" /> {hours}h de conteúdo
                             </span>
                         )}
+                        {course.rating && <span className="flex items-center gap-1.5 font-medium text-amber-600"><Star className="h-4 w-4 fill-current" />{course.rating.toFixed(1)} ({course.reviews_count} avaliações)</span>}
                     </div>
 
                     <div className="relative mt-6 flex aspect-video items-center justify-center overflow-hidden rounded-xl bg-primary/8">
@@ -156,6 +162,8 @@ export default function CatalogShow({ course }: { course: Course }) {
                             </div>
                         )}
                     </div>
+
+                    {course.can_review && <div className="mt-8"><CourseReviewForm slug={course.slug} /></div>}
                 </div>
 
                 <aside className="flex flex-col gap-4 lg:sticky lg:top-6 lg:self-start">

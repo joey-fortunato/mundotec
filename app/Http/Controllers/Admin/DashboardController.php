@@ -30,6 +30,21 @@ class DashboardController extends Controller
             ->get(['id', 'title'])
             ->map(fn (Course $c) => ['title' => $c->title, 'enrollments' => $c->enrollments_count]);
 
+        $months = collect(range(5, 0))->map(function (int $back) {
+            $month = now()->subMonths($back);
+
+            return [
+                'label' => ucfirst($month->translatedFormat('M')),
+                'revenue' => (float) Payment::where('status', PaymentStatus::Confirmed)
+                    ->whereMonth('confirmed_at', $month->month)
+                    ->whereYear('confirmed_at', $month->year)
+                    ->sum('amount'),
+                'enrollments' => Enrollment::whereMonth('created_at', $month->month)
+                    ->whereYear('created_at', $month->year)
+                    ->count(),
+            ];
+        });
+
         return Inertia::render('admin/dashboard', [
             'stats' => [
                 'revenue' => $monthRevenue,
@@ -38,6 +53,7 @@ class DashboardController extends Controller
                 'certificates' => Certificate::count(),
             ],
             'topCourses' => $topCourses,
+            'monthlyActivity' => $months,
             'recent' => Enrollment::query()
                 ->with(['user:id,name', 'course:id,title'])
                 ->latest()

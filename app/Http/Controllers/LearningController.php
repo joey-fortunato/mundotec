@@ -70,6 +70,7 @@ class LearningController extends Controller
                 'type_label' => $lesson->type->label(),
                 'content' => $lesson->content,
                 'video_url' => $lesson->video_url,
+                'attachment_url' => $lesson->attachment_path ? \Illuminate\Support\Facades\Storage::url($lesson->attachment_path) : null,
                 'completed' => in_array($lesson->id, $completedIds, true),
                 'module_title' => $lesson->module->title,
             ] : null,
