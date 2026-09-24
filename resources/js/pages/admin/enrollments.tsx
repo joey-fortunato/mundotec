@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
-import { Plus } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import { useState } from 'react';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 
 type Enrollment = {
     id: number;
@@ -118,6 +119,9 @@ export default function AdminEnrollments({
     students: Option[];
     courses: Option[];
 }) {
+    const [query, setQuery] = useState('');
+    const [statusFilter, setStatusFilter] = useState('all');
+    const filteredEnrollments = enrollments.filter(enrollment => (statusFilter === 'all' || enrollment.status === statusFilter) && `${enrollment.student} ${enrollment.student_email} ${enrollment.course}`.toLowerCase().includes(query.toLowerCase()));
     return (
         <div className="flex flex-col gap-4 p-4">
             <Head title="Inscrições" />
@@ -125,8 +129,9 @@ export default function AdminEnrollments({
                 <Heading title="Inscrições" description="Alunos inscritos e progresso por curso." />
                 <NewEnrollmentDialog students={students} courses={courses} />
             </div>
+            <div className="flex flex-col gap-3 sm:flex-row"><div className="relative flex-1"><Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input value={query} onChange={event => setQuery(event.target.value)} className="pl-9" placeholder="Pesquisar aluno, e-mail ou curso…" /></div><select value={statusFilter} onChange={event => setStatusFilter(event.target.value)} className="h-9 rounded-md border bg-background px-3 text-sm"><option value="all">Todos os estados</option><option value="active">Ativas</option><option value="pending">Pendentes</option><option value="completed">Concluídas</option><option value="cancelled">Canceladas</option></select></div>
 
-            {enrollments.length === 0 ? (
+            {filteredEnrollments.length === 0 ? (
                 <Card className="p-10 text-center text-muted-foreground">Ainda não há inscrições.</Card>
             ) : (
                 <Card className="overflow-x-auto p-0">
@@ -141,7 +146,7 @@ export default function AdminEnrollments({
                             </tr>
                         </thead>
                         <tbody>
-                            {enrollments.map((e) => (
+                            {filteredEnrollments.map((e) => (
                                 <tr key={e.id} className="border-b last:border-0">
                                     <td className="px-4 py-3">
                                         <div className="font-medium">{e.student}</div>

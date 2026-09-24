@@ -8,15 +8,24 @@ use App\Models\Certificate;
 use App\Models\Enrollment;
 use App\Models\LessonProgress;
 use App\Models\Order;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(Request $request): Response|RedirectResponse
     {
         $user = $request->user();
+
+        if ($user->isAdmin()) {
+            return redirect()->route('admin.home');
+        }
+
+        if ($user->isInstructor()) {
+            return redirect()->route('instructor.dashboard');
+        }
 
         $active = Enrollment::query()
             ->where('user_id', $user->id)

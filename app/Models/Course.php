@@ -85,6 +85,12 @@ class Course extends Model
         return $this->hasMany(Enrollment::class);
     }
 
+    /** @return HasMany<CourseReview, $this> */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(CourseReview::class);
+    }
+
     /** @param  Builder<Course>  $query */
     public function scopePublished(Builder $query): void
     {

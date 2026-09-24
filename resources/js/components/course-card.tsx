@@ -7,6 +7,7 @@ import {
     Megaphone,
     Network,
     PlayCircle
+    ,Star
     
 } from 'lucide-react';
 import type {LucideIcon} from 'lucide-react';
@@ -28,6 +29,7 @@ export type CourseCardData = {
     cover?: string | null;
     rating?: number | null;
     ratings_count?: number | null;
+    reviews_count?: number;
 };
 
 const CATEGORY_ICON: Record<string, LucideIcon> = {
@@ -120,6 +122,9 @@ export function CourseCard({ course }: { course: CourseCardData }) {
                             <span className="flex items-center gap-1.5">
                                 <Clock className="h-3.5 w-3.5" /> {duration}
                             </span>
+                        )}
+                        {course.rating && (
+                            <span className="ml-auto flex items-center gap-1 font-medium text-amber-600 dark:text-amber-400"><Star className="h-3.5 w-3.5 fill-current" />{course.rating.toFixed(1)} <span className="text-muted-foreground">({course.reviews_count ?? course.ratings_count ?? 0})</span></span>
                         )}
                     </div>
 
