@@ -15,21 +15,14 @@ class CourseCatalogController extends Controller
     {
         $courses = Course::query()
             ->published()
-            ->with('category:id,name')
+            ->with(['category:id,name,slug', 'instructor:id,name'])
+            ->withCount('lessons')
             ->when($request->string('categoria')->toString(), function ($query, string $slug) {
                 $query->whereHas('category', fn ($q) => $q->where('slug', $slug));
             })
             ->latest('published_at')
             ->get()
-            ->map(fn (Course $course) => [
-                'title' => $course->title,
-                'slug' => $course->slug,
-                'subtitle' => $course->subtitle,
-                'price' => $course->price,
-                'currency' => $course->currency,
-                'level' => $course->level,
-                'category' => $course->category?->name,
-            ]);
+            ->map(fn (Course $course) => $this->cardPayload($course));
 
         return Inertia::render('public/courses/index', [
             'courses' => $courses,
@@ -44,7 +37,7 @@ class CourseCatalogController extends Controller
     {
         abort_unless($course->status === CourseStatus::Published, 404);
 
-        $course->load(['modules.lessons', 'category:id,name', 'instructor:id,name']);
+        $course->load(['modules.lessons', 'category:id,name,slug', 'instructor:id,name']);
 
         $lessonsCount = $course->modules->sum(fn ($module) => $module->lessons->count());
 
@@ -60,8 +53,10 @@ class CourseCatalogController extends Controller
                 'duration_minutes' => $course->duration_minutes,
                 'max_installments' => $course->max_installments,
                 'category' => $course->category?->name,
+                'category_slug' => $course->category?->slug,
                 'instructor' => $course->instructor?->name,
                 'lessons_count' => $lessonsCount,
+                'cover' => $course->thumbnailUrl(),
                 'modules' => $course->modules->map(fn ($module) => [
                     'title' => $module->title,
                     'lessons' => $module->lessons->map(fn ($lesson) => [
@@ -73,5 +68,26 @@ class CourseCatalogController extends Controller
                 ]),
             ],
         ]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function cardPayload(Course $course): array
+    {
+        return [
+            'title' => $course->title,
+            'slug' => $course->slug,
+            'subtitle' => $course->subtitle,
+            'price' => $course->price,
+            'currency' => $course->currency,
+            'level' => $course->level,
+            'category' => $course->category?->name,
+            'category_slug' => $course->category?->slug,
+            'instructor' => $course->instructor?->name,
+            'lessons_count' => $course->lessons_count,
+            'duration_minutes' => $course->duration_minutes,
+            'cover' => $course->thumbnailUrl(),
+        ];
     }
 }

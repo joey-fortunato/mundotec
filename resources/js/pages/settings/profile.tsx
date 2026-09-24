@@ -1,4 +1,5 @@
 import { Form, Head, usePage } from '@inertiajs/react';
+import { useState } from 'react';
 /* @chisel-email-verification */
 import { Link } from '@inertiajs/react';
 /* @end-chisel-email-verification */
@@ -31,6 +32,13 @@ export default function Profile(
     /* @end-chisel-email-verification */
 ) {
     const { auth } = usePage<PageProps>().props;
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(auth.user.avatar_url ?? null);
+    const nameInitials = auth.user.name
+        .split(' ')
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((w) => w[0]?.toUpperCase())
+        .join('');
 
     return (
         <>
@@ -54,6 +62,30 @@ export default function Profile(
                 >
                     {({ processing, errors }) => (
                         <>
+                            <div className="grid gap-2">
+                                <Label>Foto de perfil</Label>
+                                <div className="flex items-center gap-4">
+                                    <div className="flex h-16 w-16 flex-none items-center justify-center overflow-hidden rounded-full bg-primary text-lg font-semibold text-primary-foreground">
+                                        {avatarPreview ? (
+                                            <img src={avatarPreview} alt="Avatar" className="h-full w-full object-cover" />
+                                        ) : (
+                                            nameInitials
+                                        )}
+                                    </div>
+                                    <input
+                                        type="file"
+                                        name="avatar"
+                                        accept="image/*"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            setAvatarPreview(file ? URL.createObjectURL(file) : (auth.user.avatar_url ?? null));
+                                        }}
+                                        className="block text-sm file:mr-3 file:rounded-md file:border file:bg-muted file:px-3 file:py-1.5 file:text-sm"
+                                    />
+                                </div>
+                                <InputError className="mt-1" message={errors.avatar} />
+                            </div>
+
                             <div className="grid gap-2">
                                 <Label htmlFor="name">Name</Label>
 
@@ -91,6 +123,19 @@ export default function Profile(
                                     className="mt-2"
                                     message={errors.email}
                                 />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="phone">Telefone</Label>
+                                <Input
+                                    id="phone"
+                                    className="mt-1 block w-full"
+                                    defaultValue={auth.user.phone ?? ''}
+                                    name="phone"
+                                    autoComplete="tel"
+                                    placeholder="9XX XXX XXX"
+                                />
+                                <InputError className="mt-2" message={errors.phone} />
                             </div>
 
                             {/* @chisel-email-verification */}

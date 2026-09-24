@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Enums\CourseStatus;
+use Database\Factories\CourseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property int $id
@@ -25,11 +28,11 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property string|null $level
  * @property int|null $duration_minutes
  * @property CourseStatus $status
- * @property \Illuminate\Support\Carbon|null $published_at
+ * @property Carbon|null $published_at
  */
 class Course extends Model
 {
-    /** @use HasFactory<\Database\Factories\CourseFactory> */
+    /** @use HasFactory<CourseFactory> */
     use HasFactory;
 
     protected $fillable = [
@@ -86,5 +89,12 @@ class Course extends Model
     public function scopePublished(Builder $query): void
     {
         $query->where('status', CourseStatus::Published);
+    }
+
+    public function thumbnailUrl(): ?string
+    {
+        return $this->thumbnail_path
+            ? Storage::url($this->thumbnail_path)
+            : null;
     }
 }

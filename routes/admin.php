@@ -1,17 +1,30 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\CertificateController;
 use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\EnrollmentController;
+use App\Http\Controllers\Admin\InstructorController;
 use App\Http\Controllers\Admin\LessonController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'verified', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
-        Route::get('/', fn () => redirect()->route('admin.courses.index'))->name('home');
+        Route::get('/', [DashboardController::class, 'index'])->name('home');
+        Route::get('inscricoes', [EnrollmentController::class, 'index'])->name('enrollments.index');
+        Route::post('inscricoes', [EnrollmentController::class, 'store'])->name('enrollments.store');
+        Route::get('instrutores', [InstructorController::class, 'index'])->name('instructors.index');
+        Route::get('certificados', [CertificateController::class, 'index'])->name('certificates.index');
+
+        Route::resource('users', UserController::class)
+            ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
+            ->parameters(['users' => 'user']);
 
         Route::resource('courses', CourseController::class)
             ->parameters(['courses' => 'course']);

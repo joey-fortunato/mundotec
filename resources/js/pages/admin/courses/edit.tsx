@@ -20,6 +20,7 @@ type EditCourse = {
     level: string | null;
     duration_minutes: number | null;
     status: string;
+    cover: string | null;
 };
 
 function toFormValues(course: EditCourse): Partial<CourseFormValues> {
@@ -54,6 +55,7 @@ export default function EditCoursePage({
                 <CourseForm
                     options={options}
                     initial={toFormValues(course)}
+                    initialCover={course.cover}
                     submitUrl={`/admin/courses/${course.slug}`}
                     method="put"
                     submitLabel="Guardar alterações"

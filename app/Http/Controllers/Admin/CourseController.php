@@ -11,6 +11,8 @@ use App\Models\Category;
 use App\Models\Course;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -55,6 +57,8 @@ class CourseController extends Controller
         $data['slug'] = $this->uniqueSlug($data['title']);
         $data['currency'] = 'AOA';
         $data['published_at'] = $data['status'] === CourseStatus::Published->value ? now() : null;
+        $data['thumbnail_path'] = $this->coverPath($request);
+        unset($data['cover']);
 
         $course = Course::create($data);
 
@@ -73,12 +77,19 @@ class CourseController extends Controller
                 'title' => $course->title,
                 'slug' => $course->slug,
                 'subtitle' => $course->subtitle,
+                'description' => $course->description,
+                'category' => $course->category?->name,
+                'category_id' => $course->category_id,
+                'instructor' => $course->instructor?->name,
+                'instructor_id' => $course->instructor_id,
                 'status' => $course->status->value,
                 'status_label' => $course->status->label(),
                 'price' => $course->price,
                 'currency' => $course->currency,
-                'category' => $course->category?->name,
-                'instructor' => $course->instructor?->name,
+                'max_installments' => $course->max_installments,
+                'level' => $course->level,
+                'duration_minutes' => $course->duration_minutes,
+                'cover' => $course->thumbnailUrl(),
                 'modules' => $course->modules->map(fn ($module) => [
                     'id' => $module->id,
                     'title' => $module->title,
@@ -93,6 +104,7 @@ class CourseController extends Controller
                     ]),
                 ]),
             ],
+            'options' => $this->formOptions(),
         ]);
     }
 
@@ -112,6 +124,7 @@ class CourseController extends Controller
                 'level' => $course->level,
                 'duration_minutes' => $course->duration_minutes,
                 'status' => $course->status->value,
+                'cover' => $course->thumbnailUrl(),
             ],
             'options' => $this->formOptions(),
         ]);
@@ -129,6 +142,9 @@ class CourseController extends Controller
         if ($data['status'] === CourseStatus::Published->value && $course->published_at === null) {
             $data['published_at'] = now();
         }
+
+        $data['thumbnail_path'] = $this->coverPath($request, $course);
+        unset($data['cover']);
 
         $course->update($data);
 
@@ -159,6 +175,19 @@ class CourseController extends Controller
                 'label' => $s->label(),
             ]),
         ];
+    }
+
+    private function coverPath(Request $request, ?Course $course = null): ?string
+    {
+        if (! $request->hasFile('cover')) {
+            return $course?->thumbnail_path;
+        }
+
+        if ($course?->thumbnail_path) {
+            Storage::disk('public')->delete($course->thumbnail_path);
+        }
+
+        return $request->file('cover')->store('capas', 'public');
     }
 
     private function uniqueSlug(string $title, ?int $ignoreId = null): string

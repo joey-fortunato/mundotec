@@ -6,8 +6,11 @@ use App\Enums\EnrollmentStatus;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\PaymentStatus;
+use App\Models\Certificate;
 use App\Models\Course;
 use App\Models\Enrollment;
+use App\Models\Lesson;
+use App\Models\LessonProgress;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\User;
@@ -43,7 +46,7 @@ class EnrollmentService
                     'enrollment_id' => $enrollment->id,
                     'total' => $course->price,
                     'currency' => $course->currency,
-                    'payment_method' => PaymentMethod::BankTransfer,
+                    'payment_method' => PaymentMethod::MulticaixaExpress,
                     'installments' => $installments,
                     'status' => OrderStatus::Pending,
                 ]);
@@ -54,35 +57,41 @@ class EnrollmentService
     }
 
     /**
-     * Record a proof-of-payment upload as a pending payment on the order.
+     * Initiate a Multicaixa Express payment for the next installment, pushing
+     * a request to the given phone number. Stays pending until the gateway
+     * (or an admin, while there is no integration) settles it.
      */
-    public function recordProof(Order $order, string $proofPath): Payment
+    public function initiatePayment(Order $order, string $phone): Payment
     {
-        $installmentNumber = $order->payments()->count() + 1;
+        $installmentNumber = $order->payments()
+            ->whereIn('status', [PaymentStatus::Pending, PaymentStatus::Confirmed])
+            ->count() + 1;
+
         $amount = $order->installments > 1
             ? round((float) $order->total / $order->installments, 2)
             : (float) $order->total;
 
         return $order->payments()->create([
-            'reference' => $this->reference('PG'),
+            'reference' => $this->reference('MEX'),
             'amount' => $amount,
             'installment_number' => $installmentNumber,
-            'method' => PaymentMethod::BankTransfer,
+            'method' => PaymentMethod::MulticaixaExpress,
             'status' => PaymentStatus::Pending,
-            'proof_path' => $proofPath,
+            'gateway_payload' => ['gateway' => 'multicaixa_express', 'phone' => $phone],
         ]);
     }
 
     /**
-     * Confirm a payment (admin), recompute the order and grant access.
+     * Settle a payment (gateway callback, or admin while there is no
+     * integration), recompute the order and grant access.
      */
-    public function confirmPayment(Payment $payment, User $admin): void
+    public function confirmPayment(Payment $payment, ?User $admin = null): void
     {
         DB::transaction(function () use ($payment, $admin) {
             $payment->update([
                 'status' => PaymentStatus::Confirmed,
                 'confirmed_at' => now(),
-                'confirmed_by' => $admin->id,
+                'confirmed_by' => $admin?->id,
             ]);
 
             $order = $payment->order;
@@ -105,6 +114,55 @@ class EnrollmentService
                 ]);
             }
         });
+    }
+
+    /**
+     * Mark a lesson as complete for an enrollment and recompute progress.
+     */
+    public function markLessonComplete(Enrollment $enrollment, Lesson $lesson): void
+    {
+        LessonProgress::firstOrCreate(
+            ['enrollment_id' => $enrollment->id, 'lesson_id' => $lesson->id],
+            ['completed_at' => now()],
+        );
+
+        $this->recomputeProgress($enrollment);
+    }
+
+    /**
+     * Recompute the percentage of completed lessons and, at 100%, mark the
+     * enrollment as completed.
+     */
+    public function recomputeProgress(Enrollment $enrollment): void
+    {
+        $total = Lesson::whereHas('module', fn ($q) => $q->where('course_id', $enrollment->course_id))->count();
+        $done = $enrollment->lessonProgress()->whereNotNull('completed_at')->count();
+        $percent = $total > 0 ? (int) round($done / $total * 100) : 0;
+
+        $enrollment->update([
+            'progress_percent' => $percent,
+            'status' => $percent >= 100 ? EnrollmentStatus::Completed : $enrollment->status,
+            'completed_at' => $percent >= 100 ? ($enrollment->completed_at ?? now()) : null,
+        ]);
+
+        if ($percent >= 100) {
+            $this->issueCertificate($enrollment);
+        }
+    }
+
+    /**
+     * Issue a completion certificate for an enrollment (idempotent).
+     */
+    public function issueCertificate(Enrollment $enrollment): Certificate
+    {
+        return Certificate::firstOrCreate(
+            ['user_id' => $enrollment->user_id, 'course_id' => $enrollment->course_id],
+            [
+                'serial' => 'MT-CERT-'.strtoupper(Str::random(8)),
+                'enrollment_id' => $enrollment->id,
+                'issued_at' => now(),
+            ],
+        );
     }
 
     private function reference(string $prefix): string

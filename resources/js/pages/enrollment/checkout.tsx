@@ -95,8 +95,8 @@ export default function Checkout({ course }: { course: Course }) {
                             Continuar para pagamento
                         </Button>
                         <p className="text-center text-xs text-muted-foreground">
-                            Pagamento por transferência bancária. O acesso é
-                            libertado após confirmação.
+                            Pagamento por Multicaixa Express. O acesso é
+                            libertado após a confirmação do pagamento.
                         </p>
                     </form>
                 </CardContent>
