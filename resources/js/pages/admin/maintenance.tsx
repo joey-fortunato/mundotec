@@ -1,14 +1,27 @@
 import { Head, useForm } from '@inertiajs/react';
-import { AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { useState } from 'react';
+import { AlertTriangle, CheckCircle2, ImageUp, RotateCcw } from 'lucide-react';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
-export default function MaintenanceSettings({ enabled, message }: { enabled: boolean; message: string | null }) {
-    const { data, setData, put, processing, errors } = useForm({
+type Props = {
+    enabled: boolean;
+    message: string | null;
+    background: string;
+    hasCustomBackground: boolean;
+};
+
+export default function MaintenanceSettings({ enabled, message, background, hasCustomBackground }: Props) {
+    const [preview, setPreview] = useState<string>(background);
+    const { data, setData, transform, post, processing, errors } = useForm({
         enabled,
         message: message ?? '',
+        background: null as File | null,
+        remove_background: false,
     });
+
+    transform((d) => ({ ...d, _method: 'put' }));
 
     return (
         <div className="mx-auto flex w-full max-w-3xl flex-col gap-6 p-4">
@@ -79,8 +92,62 @@ export default function MaintenanceSettings({ enabled, message }: { enabled: boo
                         <InputError message={errors.message} />
                     </div>
 
+                    <div className="grid gap-2">
+                        <span className="text-sm font-medium">Imagem de fundo</span>
+                        <div className="overflow-hidden rounded-xl border">
+                            <div
+                                className="flex h-44 items-end bg-[#0b1220] bg-cover bg-center p-3"
+                                style={{ backgroundImage: `url('${preview}')` }}
+                            >
+                                <span className="rounded-md bg-black/50 px-2 py-1 text-xs text-white backdrop-blur">
+                                    Pré-visualização
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="mt-1 flex flex-wrap items-center gap-2">
+                            <label
+                                htmlFor="maintenance-bg"
+                                className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-primary/40 bg-primary/5 px-3 py-2 text-sm transition-colors hover:border-primary hover:bg-primary/10"
+                            >
+                                <ImageUp className="h-4 w-4 text-primary" />
+                                Escolher imagem
+                            </label>
+                            <input
+                                id="maintenance-bg"
+                                type="file"
+                                accept="image/*"
+                                className="sr-only"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0] ?? null;
+                                    setData('background', file);
+                                    setData('remove_background', false);
+                                    setPreview(file ? URL.createObjectURL(file) : background);
+                                }}
+                            />
+
+                            {(hasCustomBackground || data.background) && (
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                        setData('background', null);
+                                        setData('remove_background', true);
+                                        setPreview('/images/maintence.jpg');
+                                    }}
+                                >
+                                    <RotateCcw className="mr-2 h-4 w-4" />
+                                    Repor imagem padrão
+                                </Button>
+                            )}
+                        </div>
+                        <p className="text-xs text-muted-foreground">JPG, PNG ou WEBP até 6 MB. Recomendado: paisagem (ex.: 1920×1080).</p>
+                        <InputError message={errors.background} />
+                    </div>
+
                     <div>
-                        <Button onClick={() => put('/admin/manutencao')} disabled={processing}>
+                        <Button onClick={() => post('/admin/manutencao', { forceFormData: true })} disabled={processing}>
                             Guardar
                         </Button>
                     </div>

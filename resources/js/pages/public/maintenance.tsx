@@ -1,7 +1,9 @@
 import { Head } from '@inertiajs/react';
 import { GraduationCap, Wrench } from 'lucide-react';
 
-export default function Maintenance({ message }: { message?: string | null }) {
+export default function Maintenance({ message, background }: { message?: string | null; background?: string | null }) {
+    const bg = background || '/images/maintence.jpg';
+
     return (
         <>
             <Head title="Em manutenção" />
@@ -10,7 +12,7 @@ export default function Maintenance({ message }: { message?: string | null }) {
                 {/* Imagem de fundo */}
                 <div
                     className="absolute inset-0 -z-20 bg-[#0b1220] bg-cover bg-center"
-                    style={{ backgroundImage: "url('/images/maintenance-bg.svg')" }}
+                    style={{ backgroundImage: `url('${bg}')` }}
                 />
                 {/* Escurecimento para legibilidade */}
                 <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#0b1220]/40 via-transparent to-[#0b1220]/80" />

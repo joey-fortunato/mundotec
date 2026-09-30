@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Enums\UserRole;
+use App\Http\Controllers\Admin\MaintenanceController;
 use App\Models\SiteSetting;
 use Closure;
 use Illuminate\Http\Request;
@@ -47,6 +48,7 @@ class MaintenanceMode
 
         return Inertia::render('public/maintenance', [
             'message' => $settings['message'] ?? null,
+            'background' => MaintenanceController::backgroundUrl($settings),
         ])->toResponse($request)->setStatusCode(503);
     }
 }
