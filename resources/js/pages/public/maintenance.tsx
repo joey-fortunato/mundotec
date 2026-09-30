@@ -11,7 +11,7 @@ export default function Maintenance({ message, background }: { message?: string 
 
             <div className="flex min-h-screen flex-col bg-primary text-primary-foreground lg:flex-row">
                 {/* Coluna de conteúdo */}
-                <div className="flex flex-1 flex-col px-6 py-8 sm:px-10 lg:px-16 lg:py-12">
+                <div className="flex flex-1 flex-col px-6 py-8 sm:px-10 lg:px-12 lg:py-12">
                     {/* Logo */}
                     <div className="flex items-center gap-2.5">
                         <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-primary">
@@ -37,7 +37,7 @@ export default function Maintenance({ message, background }: { message?: string 
                             </span>
 
                             <h1
-                                className="mt-6 text-4xl font-bold tracking-tight sm:text-5xl"
+                                className="mt-6 text-3xl leading-tight font-bold tracking-tight sm:text-4xl xl:text-5xl"
                                 style={{ fontFamily: 'Sora, sans-serif' }}
                             >
                                 Estamos a melhorar a plataforma
@@ -66,7 +66,7 @@ export default function Maintenance({ message, background }: { message?: string 
                 </div>
 
                 {/* Coluna da imagem (desktop) */}
-                <div className="relative hidden lg:block lg:w-[56%] xl:w-3/5">
+                <div className="relative hidden lg:block lg:w-[58%] xl:w-3/5">
                     <div className="absolute inset-0 bg-primary bg-cover bg-center" style={{ backgroundImage: `url('${bg}')` }} />
                     {/* Esbatimento fino só à esquerda, para fundir com a coluna de texto */}
                     <div className="absolute inset-0 bg-gradient-to-r from-primary to-transparent to-25%" />
