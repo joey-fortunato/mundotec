@@ -24,7 +24,7 @@ export default function Maintenance({ message, background }: { message?: string 
 
                     {/* Banner da imagem (apenas em telemóvel) */}
                     <div
-                        className="mt-8 h-44 w-full rounded-2xl bg-primary bg-cover bg-center ring-1 ring-white/15 lg:hidden"
+                        className="mt-8 h-64 w-full rounded-2xl bg-primary bg-cover bg-center ring-1 ring-white/15 sm:h-72 lg:hidden"
                         style={{ backgroundImage: `url('${bg}')` }}
                     />
 
@@ -66,11 +66,10 @@ export default function Maintenance({ message, background }: { message?: string 
                 </div>
 
                 {/* Coluna da imagem (desktop) */}
-                <div className="relative hidden lg:block lg:w-[44%] xl:w-2/5">
+                <div className="relative hidden lg:block lg:w-[56%] xl:w-3/5">
                     <div className="absolute inset-0 bg-primary bg-cover bg-center" style={{ backgroundImage: `url('${bg}')` }} />
-                    {/* Esbatimento para fundir com a coluna de conteúdo */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/20 to-transparent" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-primary/50 to-transparent" />
+                    {/* Esbatimento fino só à esquerda, para fundir com a coluna de texto */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary to-transparent to-25%" />
                 </div>
             </div>
         </>
