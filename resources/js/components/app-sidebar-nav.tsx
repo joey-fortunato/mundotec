@@ -12,6 +12,8 @@ import {
     Tags,
     UserCog,
     Users,
+    Home,
+    Wrench,
 } from 'lucide-react';
 import type {LucideIcon} from 'lucide-react';
 import { useCurrentUrl } from '@/hooks/use-current-url';
@@ -57,6 +59,8 @@ const ADMIN_GROUPS: Group[] = [
             { title: 'Inscrições', href: '/admin/inscricoes', icon: ClipboardList },
             { title: 'Utilizadores', href: '/admin/users', icon: UserCog },
             { title: 'Pagamentos', href: '/admin/pagamentos', icon: CreditCard },
+            { title: 'Página inicial', href: '/admin/pagina-inicial', icon: Home },
+            { title: 'Manutenção', href: '/admin/manutencao', icon: Wrench },
             { title: 'Definições', href: '/settings/profile', icon: Settings },
         ],
     },

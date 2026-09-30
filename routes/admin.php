@@ -5,9 +5,10 @@ use App\Http\Controllers\Admin\CertificateController;
 use App\Http\Controllers\Admin\CourseController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\EnrollmentController;
-use App\Http\Controllers\Admin\InstructorController;
 use App\Http\Controllers\Admin\HomepageController;
+use App\Http\Controllers\Admin\InstructorController;
 use App\Http\Controllers\Admin\LessonController;
+use App\Http\Controllers\Admin\MaintenanceController;
 use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\UserController;
@@ -26,6 +27,8 @@ Route::middleware(['auth', 'verified', 'admin'])
         Route::put('certificados/modelo', [CertificateController::class, 'updateBuilder'])->name('certificates.builder.update');
         Route::get('pagina-inicial', [HomepageController::class, 'edit'])->name('homepage.edit');
         Route::put('pagina-inicial', [HomepageController::class, 'update'])->name('homepage.update');
+        Route::get('manutencao', [MaintenanceController::class, 'edit'])->name('maintenance.edit');
+        Route::put('manutencao', [MaintenanceController::class, 'update'])->name('maintenance.update');
 
         Route::resource('users', UserController::class)
             ->only(['index', 'create', 'store', 'edit', 'update', 'destroy'])
